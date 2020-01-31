@@ -1,5 +1,6 @@
 from abc import ABCMeta, abstractmethod
 
+from RoboRepair import BotRepair
 from State import State
 
 
@@ -10,9 +11,9 @@ class LevelBase(metaclass=ABCMeta):
         raise NotImplementedError
 
     @abstractmethod
-    def accept_text_message(self, chat_id: str, text: str, global_state: State):
+    def accept_text_message(self, bot: BotRepair, chat_id: str, text: str, global_state: State):
         raise NotImplementedError
 
     @abstractmethod
-    def accept_voice_message(self, chat_id: str, voice_message, global_state: State):
+    def accept_voice_message(self, bot: BotRepair, chat_id: str, voice_message, global_state: State):
         raise NotImplementedError
