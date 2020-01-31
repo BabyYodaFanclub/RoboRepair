@@ -4,3 +4,4 @@
   - [ ] Verzerrt
   - [ ] Verzerrt mit Koordinatensystem
   - [ ] Alles Richtig
+- [ ] Cooles Logo von der Robotermanufaktur
