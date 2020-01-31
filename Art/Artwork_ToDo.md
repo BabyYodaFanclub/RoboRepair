@@ -1,0 +1,6 @@
+- [ ] Landschaft von dem, was Robo gerade sehen kann
+  - [ ] Zu Hell, Verschwommen und Verzerrt
+  - [ ] Verschwommen und Verzerrt
+  - [ ] Verzerrt
+  - [ ] Verzerrt mit Koordinatensystem
+  - [ ] Alles Richtig
