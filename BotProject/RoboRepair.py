@@ -28,6 +28,7 @@ class BotRepair(BotBase):
         dispatcher = self.updater.dispatcher
 
         dispatcher.add_handler(CommandHandler('start', self.start_callback))
+        dispatcher.add_handler(CommandHandler('reset', self.reset_callback))
         dispatcher.add_handler(MessageHandler(Filters.text, self.message_callback))
         dispatcher.add_handler(MessageHandler(Filters.voice, self.voice_callback))
         dispatcher.add_error_handler(self.on_error)
@@ -36,6 +37,11 @@ class BotRepair(BotBase):
 
         # j = updater.job_queue
         # j.run_repeating(self.send_subs, interval=3600, first=600)
+
+    def reset_callback(self, update: Update, context: CallbackContext):
+        self.iterating_chats[update.effective_chat.id] = None
+        context.chat_data.clear()
+        context.chat_data.update(self.create_new_chat_session())
 
     @staticmethod
     def on_error(update: Update, context: CallbackContext):
@@ -114,11 +120,8 @@ class BotRepair(BotBase):
         if self.iterating_chats[message.chat_id] != message.message_id:
             return
 
-        message = message.edit_text(texts[current_item])
+        message = message.edit_text(texts[current_item % len(texts)])
         current_item += 1
-
-        if len(texts) == current_item:
-            current_item = 0
 
         self.updater.dispatcher.job_queue.run_once(lambda x: self.iteratively_edit_message(message,
                                                                                            texts,
