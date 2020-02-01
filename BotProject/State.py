@@ -6,6 +6,6 @@ class State:
         self.robot_name = ''
         self.values = {}
 
-    name: str
+    user_name: str
     robot_name: str
     values: dict
