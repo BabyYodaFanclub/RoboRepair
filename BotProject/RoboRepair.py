@@ -95,7 +95,7 @@ class BotRepair(BotBase):
         return self.updater.dispatcher.job_queue.run_once(lambda x: self.send_text(chat_id, text), delay)
 
     def send_iteratively_edited_message(self, chat_id: str, texts: list):
-        time_per_message = timedelta(milliseconds=400)
+        time_per_message = timedelta(milliseconds=250)
         message = self.send_text(chat_id, texts[0])
         self.updater.dispatcher.job_queue.run_once(lambda x: self.iteratively_edit_message(message, texts[1:len(texts)],
                                                                                            time_per_message),
