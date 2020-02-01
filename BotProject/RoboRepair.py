@@ -6,10 +6,12 @@ from telegram.ext import Filters
 from telegram.ext import MessageHandler
 from telegram.ext import Updater
 
+from Bot import Bot
+from DummyLevel import DummyLevel
 from State import State
 
 
-class BotRepair:
+class BotRepair(Bot):
     def __init__(self):
         self.bot_token = open('./bot_token', 'r').read()
         self.updater = Updater(self.bot_token, use_context=True)
@@ -22,28 +24,33 @@ class BotRepair:
 
         dispatcher.add_handler(MessageHandler(Filters.text, self.message_callback))
         dispatcher.add_handler(MessageHandler(Filters.voice, self.voice_callback))
+        dispatcher.add_error_handler(self.on_error)
 
         self.updater.start_polling()
 
         # j = updater.job_queue
         # j.run_repeating(self.send_subs, interval=3600, first=600)
 
+    def on_error(self, update: Update, context: CallbackContext):
+        print(f'Error: {context.error}')
+
     def ensure_session(self, context):
-        if not context.chat_data['initialized']:
-            context.chat_data = self.create_new_chat_session()
+        if 'initialized' not in context.chat_data:
+            context.chat_data.update(self.create_new_chat_session())
 
     @staticmethod
     def create_new_chat_session():
-        return {'initialized': True, 'state': State(), 'current_level': Interlude_1()}
+        return {'initialized': True, 'state': State(), 'current_level': DummyLevel()}
 
     def message_callback(self, update: Update, context: CallbackContext):
-        context.chat_data['last_message'] = update.effective_message.text
-        self.ensure_session(context)
-
-        print(f'update: {update}')
-        print(f'chat_data: {context.chat_data}')
-        print(f'user_data: {context.user_data}')
-
+        try:
+            context.chat_data['last_message'] = update.effective_message.text
+            self.ensure_session(context)
+            print(f'update: {update}')
+            print(f'chat_data: {context.chat_data}')
+            print(f'user_data: {context.user_data}')
+        except Exception as e:
+            print(e)
         context.chat_data['current_level'] = \
             context.chat_data['current_level'].accept_text_message(self,
                                                                    update.effective_chat.id,
@@ -59,10 +66,10 @@ class BotRepair:
         print(f'user_data: {context.user_data}')
 
         context.chat_data['current_level'] = \
-            context.chat_data['current_level'].accept_text_message(self,
-                                                                   update.effective_chat.id,
-                                                                   update.effective_message.voice,
-                                                                   context.chat_data['state'])
+            context.chat_data['current_level'].accept_voice_message(self,
+                                                                    update.effective_chat.id,
+                                                                    update.effective_message.voice,
+                                                                    context.chat_data['state'])
 
     def send_text(self, chat_id: str, text: str) -> Message:
         return Bot(self.bot_token).send_message(chat_id, text)
