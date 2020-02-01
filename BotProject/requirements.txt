@@ -1,1 +1,6 @@
 python-telegram-bot
+# google text to speech
+gTTS
+# google speech to text
+pydub
+SpeechRecognition
