@@ -27,11 +27,12 @@
 [i] I suppose you are a human, correct?
 [i] I am only allowed to receive technical support from real human beings. Could you please solve this captcha?
 [STARTCAPTCHA1]
-[r] [i] --- I AM SORRY, THIS WAS NOT RIGHT ---
+[i] --- I AM SORRY, THIS WAS NOT RIGHT ---
 [STARTCAPTCHA2]
-[r] [i] GREAT! *happy beeping* Now for a last test! Say the following:
-[d] [a="I am a human"] "I AM A NORMAL HUMAN"
-[r] [i=2] SUPERB! Now I am convinced.
-[r] [i] I can immediatly start with my first complaint...
-[d] [i] I...
-[r] [i] Can't see anything...
+[i] GREAT! *happy beeping* Now for a last test! Say the following:
+[d] "I AM A NORMAL HUMAN"
+[a="I am a human"]
+[i=r, 2] SUPERB! Now I am convinced.
+[i] I can immediatly start with my first complaint...
+[i=d] I...
+[i] Can't see anything...
