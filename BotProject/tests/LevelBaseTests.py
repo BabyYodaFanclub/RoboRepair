@@ -5,7 +5,7 @@ from LevelBase import LevelBase
 
 class TestLevelBase(unittest.TestCase):
     def test_param_list(self):
-        val_dict: dict = LevelBase.extract_line_params('[w=abc,de]')
+        val_dict: dict = LevelBase.extract_line_params('[i=2] [d] *Calculating*')
         self.assertTrue('w' in val_dict)
         self.assertEqual(['abc', 'de'], val_dict['w'])
 
