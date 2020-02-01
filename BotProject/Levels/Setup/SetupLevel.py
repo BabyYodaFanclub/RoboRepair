@@ -96,31 +96,31 @@ class ImmediateNextAction(DialogAction):
         self.index = index
 
     def do_action_text(self, bot: BotBase, chat_id: str, text: str, global_state: State, callback):
-        self.send_message(bot, chat_id, global_state)
-        callback(self.next_index())
+        self.send_message(bot, chat_id, global_state, callback)
 
     def do_action_voice(self, bot: BotBase, chat_id: str, text: str, global_state: State, callback):
-        self.send_message(bot, chat_id, global_state)
-        callback(self.next_index())
+        self.send_message(bot, chat_id, global_state, callback)
 
-    def send_message(self, bot: BotBase, chat_id: str, global_state: State):
+    def send_message(self, bot: BotBase, chat_id: str, global_state: State, callback):
         if self.mode == DialogMode.REGULAR:
             bot.send_chat_action(chat_id, ChatAction.TYPING)
-            bot.schedule_message(chat_id, self.get_text(global_state), 1, lambda: None)
+            bot.schedule_message(chat_id, self.get_text(global_state), 1, lambda: callback(self.next_index()))
 
         elif self.mode == DialogMode.DELAYED:
             tmp = self.get_text(global_state)
             print(tmp)
-            bot.delayed_type_message(chat_id, tmp, lambda: None)
+            bot.delayed_type_message(chat_id, tmp, lambda: callback(self.next_index()))
 
         elif self.mode == DialogMode.ITERATIVE:
             bot.send_iteratively_edited_message(chat_id, self.get_text(global_state).split())
+            callback(self.next_index())
 
         elif self.mode == DialogMode.VOICE:
             speech = Speech()
             bot.send_chat_action(chat_id, ChatAction.RECORD_AUDIO)
             audio_message = speech.text_to_speech(self.get_text(global_state))
             bot.send_voice_message(chat_id, audio_message)
+            callback(self.next_index())
 
     def get_text(self, global_state: State):
         _text = self.text
