@@ -6,7 +6,7 @@ __High Priority__
   - [x] Verzerrt mit Koordinatensystem
   - [x] Alles Richtig
     - [x] Landschaft, aber ohne das Bein
-- [ ] Panorama von nah am Raumschiffswrack, der Eingang muss sichtbar sein und neben ihm eine Gegensprechanlage
+- [x] Panorama von nah am Raumschiffswrack, der Eingang muss sichtbar sein und neben ihm eine Gegensprechanlage
 - [ ] Eingangsbereich des Raumschiffes, in ihm muss sich ein Werkzeugschrank befinden.
 - [ ] Das Interieur des Werkzeugschranks, (__ULTRA LOW PRIORITY__=die Items sollten entfernbar sein.)
 __Low Priority__
