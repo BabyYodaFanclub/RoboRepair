@@ -1,5 +1,7 @@
 from gtts import gTTS
+import speech_recognition as sr
 import time
+from pydub import AudioSegment
 
 current_sec_time = lambda: int(round(time.time() * 1000 * 1000))
 
@@ -41,8 +43,24 @@ class Speech():
 
 
     def speechToText(self, voice_message) -> str:
+        r = sr.Recognizer()
 
-        raise NotImplementedError
+        voice_message.get_file().download('tmp/voice_message.ogg')
+        audio = AudioSegment.from_ogg('tmp/voice_message.ogg')
+        audio.export("tmp/voice_message.wav", format="wav")
+
+        with sr.AudioFile("tmp/voice_message.wav") as source:
+            audio = r.record(source)  # read the entire audio file
+
+        try:
+            # for testing purposes, we're just using the default API key
+            # to use another API key, use `r.recognize_google(audio, key="GOOGLE_SPEECH_RECOGNITION_API_KEY")`
+            # instead of `r.recognize_google(audio)`
+            return r.recognize_google(audio)
+        except sr.UnknownValueError:
+            print("Google Speech Recognition could not understand audio")
+        except sr.RequestError as e:
+            print("Could not request results from Google Speech Recognition service; {0}".format(e))
 
 
     def textToSpeech(self, text_message):
