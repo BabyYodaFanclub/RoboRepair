@@ -1,5 +1,5 @@
-from datetime import timedelta
 import os
+from datetime import timedelta
 
 from telegram import Update, ChatAction, Message, Bot
 from telegram.ext import CallbackContext, CommandHandler
@@ -9,8 +9,6 @@ from telegram.ext import Updater
 
 from BotBase import BotBase
 from DummyLevel import DummyLevel
-from SpeechLevel import SpeechLevel
-from Levels.Setup.SetupLevel import SetupLevel
 from State import State
 
 
@@ -21,6 +19,7 @@ class BotRepair(BotBase):
 
         self.bot_token = open('./bot_token', 'r').read()
         self.updater = Updater(self.bot_token, use_context=True)
+        self.iterating_chats = {}
 
         self.start_bot()
         print('Bot started')
@@ -29,6 +28,7 @@ class BotRepair(BotBase):
         dispatcher = self.updater.dispatcher
 
         dispatcher.add_handler(CommandHandler('start', self.start_callback))
+        dispatcher.add_handler(CommandHandler('reset', self.reset_callback))
         dispatcher.add_handler(MessageHandler(Filters.text, self.message_callback))
         dispatcher.add_handler(MessageHandler(Filters.voice, self.voice_callback))
         dispatcher.add_error_handler(self.on_error)
@@ -37,6 +37,11 @@ class BotRepair(BotBase):
 
         # j = updater.job_queue
         # j.run_repeating(self.send_subs, interval=3600, first=600)
+
+    def reset_callback(self, update: Update, context: CallbackContext):
+        self.iterating_chats[update.effective_chat.id] = None
+        context.chat_data.clear()
+        context.chat_data.update(self.create_new_chat_session())
 
     @staticmethod
     def on_error(update: Update, context: CallbackContext):
@@ -48,7 +53,7 @@ class BotRepair(BotBase):
 
     @staticmethod
     def create_new_chat_session():
-        return {'initialized': True, 'state': State(), 'current_level': SetupLevel()}
+        return {'initialized': True, 'state': State(), 'current_level': DummyLevel()}
 
     def start_callback(self, update: Update, context: CallbackContext):
         self.ensure_session(context)
@@ -61,6 +66,7 @@ class BotRepair(BotBase):
     def message_callback(self, update: Update, context: CallbackContext):
         context.chat_data['last_message'] = update.effective_message.text
         self.ensure_session(context)
+        self.iterating_chats[update.effective_chat.id] = None
 
         print(f'update: {update}')
         print(f'chat_data: {context.chat_data}')
@@ -74,6 +80,7 @@ class BotRepair(BotBase):
     def voice_callback(self, update: Update, context: CallbackContext):
         context.chat_data['last_message'] = 'Voice Message'
         self.ensure_session(context)
+        self.iterating_chats[update.effective_chat.id] = None
 
         print(f'update: {update}')
         print(f'chat_data: {context.chat_data}')
@@ -103,16 +110,22 @@ class BotRepair(BotBase):
     def send_iteratively_edited_message(self, chat_id: str, texts: list):
         time_per_message = timedelta(milliseconds=250)
         message = self.send_text(chat_id, texts[0])
-        self.updater.dispatcher.job_queue.run_once(lambda x: self.iteratively_edit_message(message, texts[1:len(texts)],
+        self.iterating_chats[chat_id] = message.message_id
+        self.updater.dispatcher.job_queue.run_once(lambda x: self.iteratively_edit_message(message, texts,
+                                                                                           1,
                                                                                            time_per_message),
                                                    time_per_message)
 
-    def iteratively_edit_message(self, message: Message, texts: list, time_per_message: timedelta):
-        message = message.edit_text(texts[0])
-        if len(texts) == 1:
+    def iteratively_edit_message(self, message: Message, texts: list, current_item: int, time_per_message: timedelta):
+        if self.iterating_chats[message.chat_id] != message.message_id:
             return
 
-        self.updater.dispatcher.job_queue.run_once(lambda x: self.iteratively_edit_message(message, texts[1:len(texts)],
+        message = message.edit_text(texts[current_item % len(texts)])
+        current_item += 1
+
+        self.updater.dispatcher.job_queue.run_once(lambda x: self.iteratively_edit_message(message,
+                                                                                           texts,
+                                                                                           current_item,
                                                                                            time_per_message),
                                                    time_per_message)
 
