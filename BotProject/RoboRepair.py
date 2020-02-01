@@ -1,4 +1,5 @@
 from datetime import timedelta
+import os
 
 from telegram import Update, ChatAction, Message, Bot
 from telegram.ext import CallbackContext, CommandHandler
@@ -8,12 +9,16 @@ from telegram.ext import Updater
 
 from BotBase import BotBase
 from DummyLevel import DummyLevel
+from SpeechLevel import SpeechLevel
 from Levels.Setup.SetupLevel import SetupLevel
 from State import State
 
 
 class BotRepair(BotBase):
     def __init__(self):
+        if not os.path.exists('.tmp'):
+            os.makedirs('.tmp')
+
         self.bot_token = open('./bot_token', 'r').read()
         self.updater = Updater(self.bot_token, use_context=True)
 
