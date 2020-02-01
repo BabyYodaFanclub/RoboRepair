@@ -1,7 +1,5 @@
 from datetime import timedelta
 
-from telegram import ChatAction
-
 from BotBase import BotBase
 from LevelBase import LevelBase
 from State import State
@@ -19,7 +17,7 @@ class SpeechLevel(LevelBase):
 
         speech = Speech()
 
-        file = speech.textToSpeech(f'Hallo {global_state.name}!')
+        file = speech.text_to_speech(f'Hallo {global_state.name}!')
 
         bot.send_voice_message(chat_id, file)
 
@@ -29,7 +27,7 @@ class SpeechLevel(LevelBase):
 
         speech = Speech()
 
-        text = speech.speechToText(voice_message)
+        text = speech.speech_to_text(voice_message)
 
         bot.send_text(chat_id, text)
 
