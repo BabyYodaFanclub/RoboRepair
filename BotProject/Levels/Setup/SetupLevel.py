@@ -41,7 +41,7 @@ class SetupLevel(LevelBase):
     def evaluate_send_type(self, next_line: str):
         line = next_line.split()
         print(line[1])
-        if line[1] == "[ ]":
+        if line[1] == "[]":
             return "none"
         if line[1] == "[it]":
             return "iterative"
