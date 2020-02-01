@@ -49,7 +49,7 @@ class BotRepair(BotBase):
     def __reset_callback(self, update: Update, context: CallbackContext):
         self.iterating_chats[update.effective_chat.id] = None
         context.chat_data.clear()
-        context.chat_data.update(self.create_new_chat_session())
+        context.chat_data.update(self.__create_new_chat_session())
 
     @staticmethod
     def __on_error(update: Update, context: CallbackContext):
@@ -57,10 +57,10 @@ class BotRepair(BotBase):
 
     def __ensure_session(self, context: CallbackContext):
         if 'initialized' not in context.chat_data:
-            context.chat_data.update(self.create_new_chat_session())
+            context.chat_data.update(self.__create_new_chat_session())
 
     @staticmethod
-    def create_new_chat_session():
+    def __create_new_chat_session():
         return {'initialized': True, 'state': State(), 'current_level': DummyLevel()}
 
     def __start_callback(self, update: Update, context: CallbackContext):
@@ -111,8 +111,14 @@ class BotRepair(BotBase):
     def send_chat_action(self, chat_id: str, action: ChatAction) -> Message:
         return Bot(self.bot_token).send_chat_action(chat_id, action)
 
-    def schedule_message(self, chat_id, text: str, delay: timedelta):
-        return self.updater.dispatcher.job_queue.run_once(lambda x: self.send_text(chat_id, text), delay)
+    def schedule_message(self, chat_id, text: str, delay: timedelta, callback):
+        return self.updater.dispatcher.job_queue.run_once(
+            lambda x: self.schedule_message(chat_id, text, delay, callback),
+            delay)
+
+    def send_scheduled_message(self, chat_id, text, callback):
+        self.send_text(chat_id, text)
+        callback()
 
     def send_iteratively_edited_message(self, chat_id: str, texts: list):
         time_per_message = timedelta(milliseconds=250)
@@ -136,29 +142,33 @@ class BotRepair(BotBase):
                                                                                                time_per_message),
                                                    time_per_message)
 
-    def delayed_type_message(self, chat_id: str, text: str):
+    def delayed_type_message(self, chat_id: str, text: str, callback):
         time_per_char = timedelta(milliseconds=100)
         message = self.send_text(chat_id, text[0])
         text = text.strip()
         self.updater.dispatcher.job_queue.run_once(lambda x: self.__delayed_type_message_part(message,
                                                                                               text,
                                                                                               2,
-                                                                                              time_per_char),
+                                                                                              time_per_char,
+                                                                                              callback),
                                                    time_per_char)
 
-    def __delayed_type_message_part(self, message: Message, text: str, current_char: int, time_per_char: timedelta):
+    def __delayed_type_message_part(self, message: Message, text: str, current_char: int, time_per_char: timedelta,
+                                    callback):
         while text[0:current_char].strip() == message.text:
             current_char += 1
         partial_text = text[0:current_char]
         message = message.edit_text(partial_text)
 
         if current_char == len(text):
+            callback()
             return
 
         self.updater.dispatcher.job_queue.run_once(lambda job: self.__delayed_type_message_part(message,
                                                                                                 text,
                                                                                                 current_char + 1,
-                                                                                                time_per_char),
+                                                                                                time_per_char,
+                                                                                                callback),
                                                    time_per_char)
 
 
