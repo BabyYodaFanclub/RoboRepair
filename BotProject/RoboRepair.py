@@ -6,12 +6,12 @@ from telegram.ext import Filters
 from telegram.ext import MessageHandler
 from telegram.ext import Updater
 
-from Bot import Bot
+from BotBase import BotBase
 from DummyLevel import DummyLevel
 from State import State
 
 
-class BotRepair(Bot):
+class BotRepair(BotBase):
     def __init__(self):
         self.bot_token = open('./bot_token', 'r').read()
         self.updater = Updater(self.bot_token, use_context=True)
@@ -48,7 +48,6 @@ class BotRepair(Bot):
             self.ensure_session(context)
             print(f'update: {update}')
             print(f'chat_data: {context.chat_data}')
-            print(f'user_data: {context.user_data}')
         except Exception as e:
             print(e)
         context.chat_data['current_level'] = \
@@ -84,7 +83,13 @@ class BotRepair(Bot):
         return Bot(self.bot_token).send_chat_action(chat_id, action)
 
     def schedule_message(self, chat_id, text: str, delay: timedelta):
-        return self.updater.dispatcher.job_queue.run_once(lambda: self.send_text(chat_id, text), delay)
+        return self.updater.dispatcher.job_queue.run_once(lambda x: self.send_text(chat_id, text), delay)
+
+    def delayed_type_message(self, chat_id, text: str, time_per_word: timedelta):
+        return self.updater.dispatcher.job_queue.run_once(lambda x: self.send_text(chat_id, text), delay)
+
+    def update_message(self, chat_id, text: str, delay: timedelta):
+        pass
 
 
 if __name__ == "__main__":

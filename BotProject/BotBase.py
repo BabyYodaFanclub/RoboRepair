@@ -1,7 +1,7 @@
 from abc import ABCMeta, abstractmethod
 
 
-class Bot(metaclass=ABCMeta):
+class BotBase(metaclass=ABCMeta):
     @abstractmethod
     def send_text(self, chat_id, text):
         pass
