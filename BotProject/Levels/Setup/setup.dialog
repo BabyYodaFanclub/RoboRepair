@@ -1,5 +1,6 @@
 [i=t] HILFE مساعدة ПОМОГНЕ AYUDA ДАПАМОГА YARDIM AIDEZ-MOI MSAADA HJELP 助けて AIUTO HELPO मदद HELPEN 도움 POMOZITE 救命 HELP
-[w] *brrzzzt*
+[w]
+[i] *brrzzzt*
 [i] Oh Hello there!
 [i] I am...
 [i=d, 2] *Calculating*
@@ -15,10 +16,10 @@
 [i=d] *Writing*
 [i] Alright! $robot_name it is, then!
 [i] And you are?
-[s=name]
+[s=user_name]
 [i] $user_name? Are you sure about this?
 [c=~5, ~1]
-[i=3] Uhm... okay. I don't know why you would lie to me in the first place... but what is your name then?
+[i=r,3] Uhm... okay. I don't know why you would lie to me in the first place... but what is your name then?
 [s=name]
 [i] So it's $user_name?
 [c=~1, ~-3]

@@ -15,7 +15,7 @@ from Speech import Speech
 @unique
 class DialogMode(Enum):
     UNDEFINED = '_'
-    ITERATIVE = 'i'
+    ITERATIVE = 't'
     DELAYED = 'd'
     REGULAR = 'r'
     VOICE = 'v'
@@ -63,6 +63,9 @@ class DialogAction(metaclass=ABCMeta):
     def next_index(self):
         return self.index + 1
 
+    def __str__(self):
+        return self.index
+
     @staticmethod
     def get_unknown_command_text():
         # @todo read UNKNOWNCOMMMADN.dialog
@@ -78,40 +81,47 @@ class ImmediateNextAction(DialogAction):
     params: {}
 
     def __init__(self, text: str, index: int, params):
-        self.mode = DialogMode(params.pop())
 
         if len(params) > 0:
-            self.params.delay = 1
+            self.mode = DialogMode(params[0])
         else:
-            self.params.delay = params[0]
+            self.mode = DialogMode.REGULAR
+
+        self.params = {}
+
+        if len(params) > 1:
+            self.params['delay'] = params[1]
+        else:
+            self.params['delay'] = 1
 
         self.text = text
         self.index = index
-        self.params = params
 
     def do_action_text(self, bot: BotBase, chat_id: str, text: str, global_state: State) -> int:
-        self.send_message(bot, chat_id)
+        self.send_message(bot, chat_id, global_state)
         return self.next_index()
 
     def do_action_voice(self, bot: BotBase, chat_id: str, text: str, global_state: State) -> int:
-        self.send_message(bot, chat_id)
+        self.send_message(bot, chat_id, global_state)
         return self.next_index()
 
-    def send_message(self, bot: BotBase, chat_id: str):
+    def send_message(self, bot: BotBase, chat_id: str, global_state: State):
         if self.mode == DialogMode.REGULAR:
             bot.send_chat_action(chat_id, ChatAction.TYPING)
-            bot.schedule_message(chat_id, self.get_text(), self.params.delay)
+            bot.schedule_message(chat_id, self.get_text(global_state), 1)
 
         elif self.mode == DialogMode.DELAYED:
-            bot.delayed_type_message(chat_id, self.get_text())
+            tmp = self.get_text(global_state);
+            print(tmp)
+            bot.delayed_type_message(chat_id, tmp)
 
         elif self.mode == DialogMode.ITERATIVE:
-            bot.send_iteratively_edited_message(chat_id, self.get_text().split())
+            bot.send_iteratively_edited_message(chat_id, self.get_text(global_state).split())
 
         elif self.mode == DialogMode.VOICE:
             speech = Speech()
             bot.send_chat_action(chat_id, ChatAction.RECORD_AUDIO)
-            audio_message = speech.text_to_speech(self.get_text())
+            audio_message = speech.text_to_speech(self.get_text(global_state))
             bot.send_voice_message(chat_id, audio_message)
 
     def get_text(self, global_state: State):
@@ -134,13 +144,13 @@ class WaitForTextAction(DialogAction):
             if param in text:
                 correct = correct + 1
 
-        if correct > 1:
+        if correct > 1 or len(self.params) == 0:
             return self.next_index()
 
         _text = self.text if self.text else self.get_unknown_command_text()
 
         bot.send_chat_action(chat_id, ChatAction.TYPING)
-        bot.schedule_message(chat_id, _text, self.params.delay)
+        bot.schedule_message(chat_id, _text, 1)
 
         return self.index
 
@@ -153,13 +163,13 @@ class WaitForAudioAction(DialogAction):
             if param in text:
                 correct = correct + 1
 
-        if correct > 1:
+        if correct > 1 or len(self.params) == 0:
             return self.next_index()
 
         _text = self.text if self.text else self.get_unknown_command_text()
 
         bot.send_chat_action(chat_id, ChatAction.TYPING)
-        bot.schedule_message(chat_id, _text, self.params.delay)
+        bot.schedule_message(chat_id, _text, 1)
 
         return self.index
 
@@ -201,7 +211,6 @@ class EndLevelAction(DialogAction):
 
 class SetupLevel(LevelBase):
 
-
     def __init__(self):
         current_dialog = io.open(
             os.path.dirname(os.path.realpath(__file__))
@@ -217,21 +226,28 @@ class SetupLevel(LevelBase):
         i = 1
         for line in current_dialog:
 
-            tmp = line.split('] ')
+            tmp = line.split(']')
             tmp = list(map(lambda b: b.replace('[', ''), tmp))
 
-            settings = tmp[0].split('=')
+            if '=' in tmp[0]:
+                t, settings = tmp[0].split('=')
+            else:
+                t, settings = [tmp[0], '']
 
-            params = settings.split(',') if len(settings) > 1 else []
-            text = tmp[1] if len(tmp) > 1 else ''
+            params = settings.split(',') if len(settings) > 0 else []
 
-            self.actions.append(DialogActionFactory.create(settings[0], params, text, i))
-            i = i+1
+            if len(tmp) > 1:
+                text = tmp[1]
+            else:
+                text = ''
+
+            self.actions.append(DialogActionFactory.create(t, params, text, i))
+            i = i + 1
 
     def current_dialog(self):
         return self.actions[self.dialog_position - 1]
 
-    def accept_chat_start(self, bot: BotBase, chat_id: str, voice_message, global_state: State) -> 'LevelBase':
+    def accept_chat_start(self, bot: BotBase, chat_id: str, global_state: State) -> 'LevelBase':
 
         if isinstance(self.current_dialog(), ImmediateNextAction):
             self.dialog_position = self.current_dialog().do_action_text(bot, chat_id, '', global_state)
@@ -240,11 +256,18 @@ class SetupLevel(LevelBase):
 
     def accept_text_message(self, bot: BotBase, chat_id: str, text: str, global_state: State) -> 'LevelBase':
         c_dialog = self.current_dialog()
+
         if isinstance(c_dialog, EndLevelAction):
             # todo next-level
             return self
 
-        self.dialog_position = c_dialog.do_action_text(bot, chat_id, text, global_state)
+        while True:
+            self.dialog_position = c_dialog.do_action_text(bot, chat_id, text, global_state)
+            c_dialog = self.current_dialog()
+            print(self.dialog_position)
+            if not isinstance(c_dialog, ImmediateNextAction):
+                break
+
         return self
 
     def accept_voice_message(self, bot: BotBase, chat_id: str, voice_message, global_state: State) -> 'LevelBase':
@@ -256,5 +279,10 @@ class SetupLevel(LevelBase):
         speech = Speech()
         text = speech.speech_to_text(voice_message)
 
-        self.dialog_position = c_dialog.do_action_voice(bot, chat_id, text, global_state)
+        while True:
+            self.dialog_position = c_dialog.do_action_text(bot, chat_id, text, global_state)
+            c_dialog = self.current_dialog()
+            if not isinstance(c_dialog, ImmediateNextAction):
+                break
+
         return self
