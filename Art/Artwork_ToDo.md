@@ -8,7 +8,7 @@ __High Priority__
     - [x] Landschaft, aber ohne das Bein
 - [ ] Panorama von nah am Raumschiffswrack, der Eingang muss sichtbar sein und neben ihm eine Gegensprechanlage
 - [ ] Eingangsbereich des Raumschiffes, in ihm muss sich ein Werkzeugschrank befinden.
-- [ ] Das Interieur des Werkzeugschranks, die Items sollten entfernbar sein.
+- [ ] Das Interieur des Werkzeugschranks, (__ULTRA LOW PRIORITY__=die Items sollten entfernbar sein.)
 __Low Priority__
 - [x] Cooles Logo von der Robotermanufaktur
 - [x] Cooles Logo von dem Lieferservice

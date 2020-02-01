@@ -42,4 +42,7 @@ Betrete das Raumschiff (ez)
 Löte das Bein an den Körper, wird schon schiefgehen. (Richtige Farbe an richtige Farbe)
 
 ## Interlude 3
-Das hat alles hervorragend geklappt. Robo ist ein Lieferroboter, der wichtige und vorallem teure Luxusgüter durch die Galaxie
+Das hat alles hervorragend geklappt. Robo ist ein Lieferroboter, der wichtige und vorallem teure Luxusgüter durch die Galaxie schippert. Wenn er sein Paket nicht rechtzeitig abliefert, kann das schlimme Folgen mit sich ziehen.
+
+## Rätsel 3
+Eben dieses Paket ist nicht da wo es sein soll. Er bittet dich ihm zu helfen es zu finden. 
