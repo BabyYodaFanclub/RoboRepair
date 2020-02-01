@@ -10,26 +10,26 @@ from State import State
 
 class SetupLevel(LevelBase):
     def __init__(self):
-        self.currentDialog = io.open("./Levels/Setup/setup.dialog", mode="r", encoding="UTF-8").readlines()
+        self.current_dialog = io.open("./Levels/Setup/setup.dialog", mode="r", encoding="UTF-8").readlines()
         self.n = 0
 
     def accept_chat_start(self, bot: BotBase, chat_id: str, voice_message, global_state: State) -> 'LevelBase':
-        send_type = self.evaluate_send_type(self.currentDialog[self.n])
+        send_type = self.evaluate_send_type(self.current_dialog[self.n])
         if send_type == "none":
-            bot.schedule_message(chat_id, self.currentDialog[self.n], timedelta(seconds=2))
+            bot.schedule_message(chat_id, self.current_dialog[self.n], timedelta(seconds=2))
         if send_type == "iterative":
-            bot.send_iteratively_edited_message(chat_id, self.currentDialog[self.n].split())
+            bot.send_iteratively_edited_message(chat_id, self.current_dialog[self.n].split())
         return self
 
     def accept_text_message(self, bot: BotBase, chat_id: str, text: str, global_state: State) -> 'LevelBase':
-        send_type = self.evaluate_send_type(self.currentDialog[self.n])
+        send_type = self.evaluate_send_type(self.current_dialog[self.n])
         print(send_type)
         if send_type == "none":
-            bot.schedule_message(chat_id, self.currentDialog[self.n], timedelta(seconds=2))
+            bot.schedule_message(chat_id, self.current_dialog[self.n], timedelta(seconds=2))
         if send_type == "iterative":
-            bot.send_iteratively_edited_message(chat_id, self.trim_line(self.currentDialog[self.n]).split())
+            bot.send_iteratively_edited_message(chat_id, self.trim_line(self.current_dialog[self.n]).split())
         if send_type == "delayed":
-            bot.delayed_type_message(chat_id, self.trim_line(self.currentDialog[self.n]))
+            bot.delayed_type_message(chat_id, self.trim_line(self.current_dialog[self.n]))
         return self
 
     def accept_voice_message(self, bot: BotBase, chat_id: str, voice_message, global_state: State) -> 'LevelBase':
