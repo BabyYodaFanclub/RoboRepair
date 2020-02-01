@@ -3,6 +3,7 @@ import os
 from abc import ABCMeta
 from enum import Enum, unique
 
+from future.moves.tkinter import dialog
 from telegram import ChatAction
 
 from BotBase import BotBase
@@ -34,6 +35,8 @@ class DialogActionFactory:
             return ChoiceAction(text, index, params)
         if type == 's':
             return SaveVarAction(text, index, params)
+        if type == 'p':
+            return SendPictureAction(text, index, params)
         if type == 'e':
             return EndLevelAction(text, index, params)
 
@@ -55,7 +58,6 @@ class DialogAction(metaclass=ABCMeta):
     def do_action_voice(self, bot: BotBase, chat_id: str, text: str, global_state: State, callback):
         bot.send_chat_action(chat_id, ChatAction.TYPING)
         bot.schedule_message(chat_id, DialogAction.get_unknown_command_text(), 1, lambda: callback(self.index))
-        return self.index
 
     def next_index(self):
         return self.index + 1
@@ -198,6 +200,20 @@ class SaveVarAction(DialogAction):
         callback(self.next_index())
 
 
+class SendPictureAction(DialogAction):
+
+    def do_action_text(self, bot: BotBase, chat_id: str, text: str, global_state: State, callback):
+        self.__send_picture(bot, chat_id, callback)
+
+    def do_action_voice(self, bot: BotBase, chat_id: str, text: str, global_state: State, callback):
+        self.__send_picture(bot, chat_id, callback)
+
+    def __send_picture(self, bot: BotBase, chat_id: str, callback):
+        bot.send_chat_action(chat_id, ChatAction.UPLOAD_PHOTO)
+        bot.send_image(chat_id, self.params[0])
+        callback(self.next_index())
+
+
 class EndLevelAction(DialogAction):
     pass
 
@@ -240,12 +256,20 @@ class SetupLevel(LevelBase):
     def current_dialog(self):
         return self.actions[self.dialog_position - 1]
 
-    def accept_chat_start(self, bot: BotBase, chat_id: str, global_state: State) -> 'LevelBase':
+    @staticmethod
+    def is_send_action(d):
+        return isinstance(d, ImmediateNextAction) or isinstance(d, SendPictureAction)
 
-        if isinstance(self.current_dialog(), ImmediateNextAction):
-            self.dialog_position = self.current_dialog().do_action_text(bot, chat_id, '', global_state, lambda: None)
+    def accept_chat_start(self, bot: BotBase, chat_id: str, global_state: State) -> 'LevelBase':
+        c_dialog = self.current_dialog()
+        if self.is_send_action(c_dialog):
+            c_dialog.do_action_text(bot, chat_id, '', global_state, lambda x: self.set_current_dialog(x))
 
         return self
+
+    def set_current_dialog(self, dialog_position: int):
+        self.dialog_position = dialog_position
+
 
     def accept_text_message(self, bot: BotBase, chat_id: str, text: str, global_state: State) -> 'LevelBase':
         c_dialog = self.current_dialog()
@@ -279,7 +303,7 @@ class SetupLevel(LevelBase):
         c_dialog = self.current_dialog()
         print(self.dialog_position)
 
-        if not isinstance(c_dialog, ImmediateNextAction):
+        if not self.is_send_action(c_dialog):
             return
 
         c_dialog.do_action_text(bot, chat_id, text, global_state,
