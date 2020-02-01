@@ -8,6 +8,7 @@ from telegram.ext import Updater
 
 from BotBase import BotBase
 from DummyLevel import DummyLevel
+from Levels.Setup.SetupLevel import SetupLevel
 from State import State
 
 
@@ -42,7 +43,7 @@ class BotRepair(BotBase):
 
     @staticmethod
     def create_new_chat_session():
-        return {'initialized': True, 'state': State(), 'current_level': DummyLevel()}
+        return {'initialized': True, 'state': State(), 'current_level': SetupLevel()}
 
     def start_callback(self, update: Update, context: CallbackContext):
         self.ensure_session(context)
