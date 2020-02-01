@@ -10,5 +10,5 @@ __High Priority__
 - [ ] Eingangsbereich des Raumschiffes, in ihm muss sich ein Werkzeugschrank befinden.
 - [ ] Das Interieur des Werkzeugschranks, die Items sollten entfernbar sein.
 __Low Priority__
-- [ ] Cooles Logo von der Robotermanufaktur
-- [ ] Cooles Logo von dem Lieferservice
+- [x] Cooles Logo von der Robotermanufaktur
+- [x] Cooles Logo von dem Lieferservice

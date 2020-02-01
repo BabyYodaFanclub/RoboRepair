@@ -21,11 +21,11 @@ class BotBase(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def schedule_message(self, chat_id: str, text: str, delay):
+    def schedule_message(self, chat_id: str, text: str, delay, callback):
         pass
 
     @abstractmethod
-    def delayed_type_message(self, chat_id: str, text: str):
+    def delayed_type_message(self, chat_id: str, text: str, callback):
         pass
 
     @abstractmethod
