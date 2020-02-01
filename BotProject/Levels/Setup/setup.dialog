@@ -1,0 +1,16 @@
+[w] HELP HILFE مساعدة ПОМОГНЕ AYUDA ДАПАМОГА YARDIM AIDEZ-MOI MSAADA HJELP 助けて AIUTO HELPO मदद HELPEN 도움 POMOZITE 救命
+[i] *brrzzzt* Oh Hello there!
+[i] I am... *Calculating*
+[i] I am sorry. I don't know. My storage circuits must have been damaged.
+[w] Would you be so kind and tell me *tzzzt* how you want to refer *brbrbrbrbr* to me?
+{{Robot_Name}}? Is this correct?
+*Writing* Alright! {{Robot_Name}} it is then!
+And you are?
+{{User_name}}? Are you sure about this?
+*Writing* Splendid! I am {{Robot_Name}}, nice to meet you {{User_name}}!
+I suppose you are a human, correct?
+I am only allowed to receive technical support from real human beings. Could you please solve this captcha?
+[STARTCAPTCHA1]
+--- I AM SORRY, THIS WAS NOT RIGHT ---
+[STARTCAPTCHA2]
+GREAT! *happy beeping* So you really are a 'Regular Human Being'!
