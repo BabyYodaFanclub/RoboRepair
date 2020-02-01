@@ -1,24 +1,31 @@
-[t] [w] HILFE مساعدة ПОМОГНЕ AYUDA ДАПАМОГА YARDIM AIDEZ-MOI MSAADA HJELP 助けて AIUTO HELPO मदद HELPEN 도움 POMOZITE 救命 HELP
-[r] [d] *brrzzzt*
-[r] [i] Oh Hello there!
-[r] [i] I am...
-[d] [i=2] *Calculating*
-[r] [i=5] I am sorry. I don't know. My storage circuits must have been damaged.
-[r] [s=robot_name] Would you be so kind and tell me *tzzzt* how you want to refer *brbrbrbrbr* to me?
-[r] [c=10, 8] $robot_name ? Is this correct?
-[r] [s=robot_name] It is not??? Okay... How do you want to call me instead?
-[r] [c=10, 8] $robot_name ? Is this correct?
-[d] [i] *Writing*
-[r] [i] Alright! {{Robot_Name}} it is then!
-[r] [s=name] And you are?
-[r] [c=16, 14] $user_name ? Are you sure about this?
-[r] [s=name] Uhm... okay. I don't know why you would lie to me in the first place... but what is your name then?
-[r] [c=16, 14] So it's $user_name ?
-[d] [i] *Writing*
-[r] [i] Splendid!
-[r] [i] I am $robot_name , nice to meet you $user_name !
-[c=20, 20] [i] I suppose you are a human, correct?
-[r] [i] I am only allowed to receive technical support from real human beings. Could you please solve this captcha?
+[i=t] HILFE مساعدة ПОМОГНЕ AYUDA ДАПАМОГА YARDIM AIDEZ-MOI MSAADA HJELP 助けて AIUTO HELPO मदद HELPEN 도움 POMOZITE 救命 HELP
+[w] *brrzzzt*
+[i] Oh Hello there!
+[i] I am...
+[i=d, 2] *Calculating*
+[i=r, 5] I am sorry. I don't know. My storage circuits must have been damaged.
+[i] Would you be so kind and tell me *tzzzt* how you want to refer *brbrbrbrbr* to me?
+[s=robot_name]
+[i] $robot_name ? Is this correct?
+[c=12, 10]
+[i] It is not??? Okay... How do you want to call me instead?
+[c=10, 8]
+[i] $robot_name ? Is this correct?
+[i=d] *Writing*
+[i] Alright! {{Robot_Name}} it is then!
+[s=name]
+[i] And you are?
+[c=16, 14]
+[i] $user_name ? Are you sure about this?
+[c=16, 14]
+[s=name] Uhm... okay. I don't know why you would lie to me in the first place... but what is your name then?
+[i] So it's $user_name ?
+[i=d] *Writing*
+[i] Splendid!
+[i] I am $robot_name , nice to meet you $user_name !
+[c=20, 20]
+[i] I suppose you are a human, correct?
+[i] I am only allowed to receive technical support from real human beings. Could you please solve this captcha?
 [STARTCAPTCHA1]
 [r] [i] --- I AM SORRY, THIS WAS NOT RIGHT ---
 [STARTCAPTCHA2]

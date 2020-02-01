@@ -19,13 +19,13 @@ Robo erzählt ein bisschen von sich. Er ist Kurier für ein Intergalaktisches Ex
 ## Rätsel 2 – Auftreibung eines Lötkolbens
 Robo muss mithilfe des Spielers seine Beine reparieren. Er kann sich zwischen zwei oder drei Orten bewegen, allerdings nur sehr langsam, da er langsam kriechen muss. Der Ortswechsel geschieht in wenigen Minuten Echtzeit.
 
-Robo muss sein Bein und einen Lötkolben finden. Das Bein befindet sich direkt vor ihm, der Lötkolben befindet sich im Eingang des Raumschiffs. Das Problem ist, dass das Raumschiff verschlossen ist. Durch den Unfall ist das Raumschiff in den Wartungsmodus geschaltet worden. Dieser lässt sich nur durch den Klang einer menschlichen Stimme
+Robo muss sein Bein und einen Lötkolben finden. Das Bein befindet sich direkt vor ihm, der Lötkolben befindet sich im Eingang des Raumschiffs. Das Problem ist, dass das Raumschiff verschlossen ist. Durch den Unfall ist das Raumschiff in den Wartungsmodus geschaltet worden. Dieser lässt sich nur durch den Klang einer menschlichen Stimme deaktivieren.
 
 ### Locations
 |#n|Name|Beschreibung|Items|
 |:-:|:-:|---|---|
 |1|Crash Site|Der Ort an dem Robo aufgewacht ist|Das fehlende Bein|
-|2|In front of the Wreckage|'duh|Nichts|
+|2|In front of the Wreckage|'duh|Tür|
 |3|Wreckage|Das Wrack des Raumschiffs|Der Lötkolben|
 
 ### Schritt 1
@@ -35,8 +35,11 @@ Bewege dich näher zum Raumschiff
 ### Schritt 3
 Das Raumschiff ist verschlossen. Es befindet sich im Wartungsmodus, der nur von einem Menschen entsperrt werden kann, wenn er das Passwort dazu laut Ausspricht.
 ### Schritt 4
-Betrete das Raumschiff
+Betrete das Raumschiff (ez)
 ### Schritt 5
-Öffne den Werkzeugschrank und nimm den Lötkolben
+Öffne den Werkzeugschrank und nimm den Lötkolben (ez)
+### Schritt 6
+Löte das Bein an den Körper, wird schon schiefgehen. (Richtige Farbe an richtige Farbe)
 
-## Rätsel 3 – Das Bein an den Körper operieren
+## Interlude 3
+Das hat alles hervorragend geklappt. Robo ist ein Lieferroboter, der wichtige und vorallem teure Luxusgüter durch die Galaxie
