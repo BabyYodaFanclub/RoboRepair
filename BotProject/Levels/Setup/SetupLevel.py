@@ -28,6 +28,8 @@ class SetupLevel(LevelBase):
             bot.schedule_message(chat_id, self.currentDialog[self.n], timedelta(seconds=2))
         if send_type == "iterative":
             bot.send_iteratively_edited_message(chat_id, self.trim_line(self.currentDialog[self.n]).split())
+        if send_type == "delayed":
+            bot.delayed_type_message(chat_id, self.trim_line(self.currentDialog[self.n]))
         return self
 
     def accept_voice_message(self, bot: BotBase, chat_id: str, voice_message, global_state: State) -> 'LevelBase':
@@ -45,6 +47,8 @@ class SetupLevel(LevelBase):
             return "none"
         if line[1] == "[it]":
             return "iterative"
+        if line[1] == "[de]":
+            return "delayed"
 
     def trim_line(self, next_line: str):
         return next_line.split("] ")[2]
