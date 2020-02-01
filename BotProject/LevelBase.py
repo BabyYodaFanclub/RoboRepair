@@ -27,7 +27,7 @@ class LevelBase(metaclass=ABCMeta):
         out = {}
         matches = re.findall(r'\[([\w])(?:=((?:[\w\d]+,)*[\w\d]+))?\]', param_string)
         for match in matches:
-            if len(match) > 1 and len(match[1]) > 1:
+            if len(match) > 1 and len(match[1]) >= 1:
                 out[match[0]] = match[1].split(',')
             else:
                 out[match[0]] = None
