@@ -17,3 +17,6 @@ class LevelBase(metaclass=ABCMeta):
     @abstractmethod
     def accept_voice_message(self, bot: BotBase, chat_id: str, voice_message, global_state: State) -> 'LevelBase':
         raise NotImplementedError
+
+    def accept_chat_start(self, bot: BotBase, chat_id: str, voice_message, global_state: State) -> 'LevelBase':
+        pass

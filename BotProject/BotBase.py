@@ -1,5 +1,4 @@
 from abc import ABCMeta, abstractmethod
-from datetime import timedelta
 
 from telegram import ChatAction
 
@@ -26,5 +25,9 @@ class BotBase(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def delayed_type_message(self, chat_id: str, text: str, time_per_word: timedelta):
+    def delayed_type_message(self, chat_id: str, text: str):
+        pass
+
+    @abstractmethod
+    def send_iteratively_edited_message(self, chat_id: str, texts: list):
         pass

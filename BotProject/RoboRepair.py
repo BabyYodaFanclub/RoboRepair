@@ -1,7 +1,7 @@
 from datetime import timedelta
 
 from telegram import Update, ChatAction, Message, Bot
-from telegram.ext import CallbackContext
+from telegram.ext import CallbackContext, CommandHandler
 from telegram.ext import Filters
 from telegram.ext import MessageHandler
 from telegram.ext import Updater
@@ -22,6 +22,7 @@ class BotRepair(BotBase):
     def start_bot(self):
         dispatcher = self.updater.dispatcher
 
+        dispatcher.add_handler(CommandHandler('start', self.start_callback))
         dispatcher.add_handler(MessageHandler(Filters.text, self.message_callback))
         dispatcher.add_handler(MessageHandler(Filters.voice, self.voice_callback))
         dispatcher.add_error_handler(self.on_error)
@@ -31,7 +32,8 @@ class BotRepair(BotBase):
         # j = updater.job_queue
         # j.run_repeating(self.send_subs, interval=3600, first=600)
 
-    def on_error(self, update: Update, context: CallbackContext):
+    @staticmethod
+    def on_error(update: Update, context: CallbackContext):
         print(f'Error: {context.error}')
 
     def ensure_session(self, context):
@@ -42,14 +44,21 @@ class BotRepair(BotBase):
     def create_new_chat_session():
         return {'initialized': True, 'state': State(), 'current_level': DummyLevel()}
 
+    def start_callback(self, update: Update, context: CallbackContext):
+        self.ensure_session(context)
+        context.chat_data['current_level'] = \
+            context.chat_data['current_level'].accept_chat_start(self,
+                                                                 update.effective_chat.id,
+                                                                 update.effective_message.text,
+                                                                 context.chat_data['state'])
+
     def message_callback(self, update: Update, context: CallbackContext):
-        try:
-            context.chat_data['last_message'] = update.effective_message.text
-            self.ensure_session(context)
-            print(f'update: {update}')
-            print(f'chat_data: {context.chat_data}')
-        except Exception as e:
-            print(e)
+        context.chat_data['last_message'] = update.effective_message.text
+        self.ensure_session(context)
+
+        print(f'update: {update}')
+        print(f'chat_data: {context.chat_data}')
+
         context.chat_data['current_level'] = \
             context.chat_data['current_level'].accept_text_message(self,
                                                                    update.effective_chat.id,
@@ -85,11 +94,46 @@ class BotRepair(BotBase):
     def schedule_message(self, chat_id, text: str, delay: timedelta):
         return self.updater.dispatcher.job_queue.run_once(lambda x: self.send_text(chat_id, text), delay)
 
-    def delayed_type_message(self, chat_id: str, text: str, time_per_word: timedelta):
+    def send_iteratively_edited_message(self, chat_id: str, texts: list):
+        time_per_message = timedelta(milliseconds=300)
+        message = self.send_text(chat_id, texts[0])
+        self.updater.dispatcher.job_queue.run_once(lambda x: self.iteratively_edit_message(message, texts[1:len(texts)],
+                                                                                           time_per_message),
+                                                   time_per_message)
+
+    def iteratively_edit_message(self, message: Message, texts: list, time_per_message: timedelta):
+        message = message.edit_text(texts[0])
+        if len(texts) == 1:
+            return
+
+        self.updater.dispatcher.job_queue.run_once(lambda x: self.iteratively_edit_message(message, texts[1:len(texts)],
+                                                                                           time_per_message),
+                                                   time_per_message)
+
+    def delayed_type_message(self, chat_id: str, text: str):
+        time_per_char = timedelta(milliseconds=100)
         message = self.send_text(chat_id, text[0])
-        for i in range(1, len(text)):
-            partial_text = text[0:i].strip()
-            self.updater.dispatcher.job_queue.run_once(lambda x: message.edit_text(partial_text), time_per_word * i)
+        text = text.strip()
+        self.updater.dispatcher.job_queue.run_once(lambda x: self.delayed_type_message_part(message,
+                                                                                            text,
+                                                                                            2,
+                                                                                            time_per_char),
+                                                   time_per_char)
+
+    def delayed_type_message_part(self, message: Message, text: str, current_char: int, time_per_char: timedelta):
+        while text[0:current_char].strip() == message.text:
+            current_char += 1
+        partial_text = text[0:current_char]
+        message = message.edit_text(partial_text)
+
+        if current_char == len(text):
+            return
+
+        self.updater.dispatcher.job_queue.run_once(lambda x: self.delayed_type_message_part(message,
+                                                                                            text,
+                                                                                            current_char + 1,
+                                                                                            time_per_char),
+                                                   time_per_char)
 
 
 if __name__ == "__main__":
