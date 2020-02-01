@@ -11,3 +11,4 @@ __High Priority__
 - [ ] Das Interieur des Werkzeugschranks, die Items sollten entfernbar sein.
 __Low Priority__
 - [ ] Cooles Logo von der Robotermanufaktur
+- [ ] Cooles Logo von dem Lieferservice
