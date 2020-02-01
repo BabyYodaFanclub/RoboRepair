@@ -18,6 +18,11 @@ class TestLevelBase(unittest.TestCase):
         self.assertTrue('i' in val_dict)
         self.assertEqual(None, val_dict['i'])
 
+    def test_multichar_params(self):
+        val_dict: dict = LevelBase.extract_line_params('[it]')
+        self.assertTrue('it' in val_dict)
+        self.assertEqual(None, val_dict['it'])
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -25,7 +25,7 @@ class LevelBase(metaclass=ABCMeta):
     @staticmethod
     def extract_line_params(param_string: str) -> dict:
         out = {}
-        matches = re.findall(r'\[([\w])(?:=((?:[\w\d]+,)*[\w\d]+))?\]', param_string)
+        matches = re.findall(r'\[([\w]+)(?:=((?:[\w\d]+,)*[\w\d]+))?\]', param_string)
         for match in matches:
             if len(match) > 1 and len(match[1]) >= 1:
                 out[match[0]] = match[1].split(',')
