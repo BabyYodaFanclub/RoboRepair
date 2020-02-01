@@ -9,7 +9,7 @@ from telegram.ext import Updater
 
 from BotBase import BotBase
 from DummyLevel import DummyLevel
-from Levels.Setup.SetupLevel import SetupLevel
+from LevelBase import LevelBase
 from State import State
 
 
@@ -99,6 +99,9 @@ class BotRepair(BotBase):
                                                                     update.effective_chat.id,
                                                                     update.effective_message.voice,
                                                                     context.chat_data['state'])
+
+    def update_current_level(self, chat_id: str, level: LevelBase):
+        self.updater.dispatcher.chat_data[chat_id]['current_level'] = level
 
     def send_text(self, chat_id: str, text: str) -> Message:
         return Bot(self.bot_token).send_message(chat_id, text)
