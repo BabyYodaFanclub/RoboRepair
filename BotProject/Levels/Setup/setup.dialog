@@ -14,6 +14,7 @@
 [c] [r] I suppose you are a human, correct?
 [i] [r] I am only allowed to receive technical support from real human beings. Could you please solve this captcha?
 [STARTCAPTCHA1]
-[i] [] --- I AM SORRY, THIS WAS NOT RIGHT ---
+[i] [r] --- I AM SORRY, THIS WAS NOT RIGHT ---
 [STARTCAPTCHA2]
-[i] [] GREAT! *happy beeping* So you really are a 'Regular Human Being'!
+[i] [r] GREAT! *happy beeping* Now for a last test! Say the following:
+[a="I am a human"] [d] "I AM A NORMAL HUMAN"
