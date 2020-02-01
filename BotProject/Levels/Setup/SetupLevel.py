@@ -1,49 +1,260 @@
 import io
+import os
+import re
+from enum import Enum, unique
 from datetime import timedelta
+from abc import ABCMeta, abstractmethod
 
 from telegram import ChatAction
 
 from BotBase import BotBase
 from LevelBase import LevelBase
 from State import State
+from Speech import Speech
+
+@unique
+class DialogMode(Enum):
+    UNDEFINED = '_'
+    ITERATIVE = 'i'
+    DELAYED = 'd'
+    REGULAR = 'r'
+    VOICE = 'v'
+
+
+class DialogActionFactory:
+
+    @staticmethod
+    def create(type: str, params, text: str, index):
+        if type == 'i':
+            return ImmediateNextAction(text, index, params)
+        if type == 'w':
+            return WaitForTextAction(text, index, params)
+        if type == 'a':
+            return WaitForAudioAction(text, index, params)
+        if type == 'c':
+            return ChoiceAction(text, index, params)
+        if type == 's':
+            return SaveVarAction(text, index, params)
+        if type == 'e':
+            return EndLevelAction(text, index, params)
+
+
+class DialogAction(metaclass=ABCMeta):
+
+    index: 0
+    text: ''
+    params: {}
+
+    def __init__(self, text: str, index: int, params):
+        self.index = index
+        self.params = params
+        self.text = text
+
+    def do_action_text(self, bot: BotBase, chat_id: str, text: str, global_state: State) -> int:
+        bot.send_chat_action(chat_id, ChatAction.TYPING)
+        bot.schedule_message(chat_id, DialogAction.get_unknown_command_text(), 1)
+        return self.index
+
+    def do_action_voice(self, bot: BotBase, chat_id: str, text: str, global_state: State) -> int:
+        bot.send_chat_action(chat_id, ChatAction.TYPING)
+        bot.schedule_message(chat_id, DialogAction.get_unknown_command_text(), 1)
+        return self.index
+
+    def next_index(self):
+        return self.index + 1
+
+    @staticmethod
+    def get_unknown_command_text():
+        # @todo read UNKNOWNCOMMMADN.dialog
+        return 'Unknown Command'
+
+
+class ImmediateNextAction(DialogAction):
+
+    bot: None
+    mode: DialogMode.UNDEFINED
+    text: ''
+    index: 0
+    params: {}
+
+    def __init__(self, text: str, index: int, params):
+        self.mode = DialogMode(params.pop())
+
+        if len(params) > 0:
+            self.params.delay = 1
+        else:
+            self.params.delay = params[0]
+
+        self.text = text
+        self.index = index
+        self.params = params
+
+    def do_action_text(self, bot: BotBase, chat_id: str, text: str, global_state: State) -> int:
+        self.send_message(bot, chat_id)
+        return self.next_index()
+
+    def do_action_voice(self, bot: BotBase, chat_id: str, text: str, global_state: State) -> int:
+        self.send_message(bot, chat_id)
+        return self.next_index()
+
+    def send_message(self, bot: BotBase, chat_id: str):
+        if self.mode == DialogMode.REGULAR:
+            bot.send_chat_action(chat_id, ChatAction.TYPING)
+            bot.schedule_message(chat_id, self.get_text(), self.params.delay)
+
+        elif self.mode == DialogMode.DELAYED:
+            bot.delayed_type_message(chat_id, self.get_text())
+
+        elif self.mode == DialogMode.ITERATIVE:
+            bot.send_iteratively_edited_message(chat_id, self.get_text().split())
+
+        elif self.mode == DialogMode.VOICE:
+            speech = Speech()
+            bot.send_chat_action(chat_id, ChatAction.RECORD_AUDIO)
+            audio_message = speech.text_to_speech(self.get_text())
+            bot.send_voice_message(chat_id, audio_message)
+
+    def get_text(self, global_state: State):
+        _text = self.text
+
+        for key, value in global_state.values.items():
+            _text = _text.replace('$' + key, value)
+
+        if "$" in _text:
+            raise Exception('Found $ in ' + self.text)
+
+        return _text
+
+
+class WaitForTextAction(DialogAction):
+
+    def do_action_text(self, bot: BotBase, chat_id: str, text: str, global_state: State) -> int:
+        correct = 0
+        for param in self.params:
+            if param in text:
+                correct = correct + 1
+
+        if correct > 1:
+            return self.next_index()
+
+        _text = self.text if self.text else self.get_unknown_command_text()
+
+        bot.send_chat_action(chat_id, ChatAction.TYPING)
+        bot.schedule_message(chat_id, _text, self.params.delay)
+
+        return self.index
+
+
+class WaitForAudioAction(DialogAction):
+
+    def do_action_voice(self, bot: BotBase, chat_id: str, text: str, global_state: State) -> int:
+        correct = 0
+        for param in self.params:
+            if param in text:
+                correct = correct + 1
+
+        if correct > 1:
+            return self.next_index()
+
+        _text = self.text if self.text else self.get_unknown_command_text()
+
+        bot.send_chat_action(chat_id, ChatAction.TYPING)
+        bot.schedule_message(chat_id, _text, self.params.delay)
+
+        return self.index
+
+
+class ChoiceAction(DialogAction):
+
+    def do_action_text(self, bot: BotBase, chat_id: str, text: str, global_state: State) -> int:
+        try:
+            result = self.evaluate_choice(text)
+            return self.calc_line_number(self.params[0 if result else 1])
+        except Exception as e:
+            return self.index - 1
+
+    def evaluate_choice(self, text: str):
+        # @todo check valid answers!
+        # raise Error if not in yes and not in no list
+        return "yes" in text
+
+    def calc_line_number(self, number: str):
+        relative = '~' in number
+        num = int(number.replace('~', ''))
+
+        if relative:
+            return self.index + num
+        else:
+            return num
+
+
+class SaveVarAction(DialogAction):
+
+    def do_action_text(self, bot: BotBase, chat_id: str, text: str, global_state: State) -> int:
+        global_state.values[self.params[0]] = text
+        return self.next_index()
+
+
+class EndLevelAction(DialogAction):
+    pass
 
 
 class SetupLevel(LevelBase):
+
+
     def __init__(self):
-        self.current_dialog = io.open("./Levels/Setup/setup.dialog", mode="r", encoding="UTF-8").readlines()
-        self.n = 0
-        self.send_type = None
+        current_dialog = io.open(
+            os.path.dirname(os.path.realpath(__file__))
+            # + os.path.basename(__file__).lower()
+            + '/setup'
+            + ".dialog", mode="r", encoding="UTF-8"
+        ).readlines()
+
+        self.dialog_position = 1
+
+        self.actions = []
+
+        i = 1
+        for line in current_dialog:
+
+            tmp = line.split('] ')
+            tmp = list(map(lambda b: b.replace('[', ''), tmp))
+
+            settings = tmp[0].split('=')
+
+            params = settings.split(',') if len(settings) > 1 else []
+            text = tmp[1] if len(tmp) > 1 else ''
+
+            self.actions.append(DialogActionFactory.create(settings[0], params, text, i))
+            i = i+1
+
+    def current_dialog(self):
+        return self.actions[self.dialog_position - 1]
 
     def accept_chat_start(self, bot: BotBase, chat_id: str, voice_message, global_state: State) -> 'LevelBase':
-        send_type = self.evaluate_send_type(self.current_dialog[self.n])
-        if send_type == "none":
-            bot.schedule_message(chat_id, self.current_dialog[self.n], timedelta(seconds=2))
-        if send_type == "iterative":
-            bot.send_iteratively_edited_message(chat_id, self.current_dialog[self.n].split())
+
+        if isinstance(self.current_dialog(), ImmediateNextAction):
+            self.dialog_position = self.current_dialog().do_action_text(bot, chat_id, '', global_state)
+
         return self
 
     def accept_text_message(self, bot: BotBase, chat_id: str, text: str, global_state: State) -> 'LevelBase':
-        self.evaluate_next_line(text)
+        c_dialog = self.current_dialog()
+        if isinstance(c_dialog, EndLevelAction):
+            # todo next-level
+            return self
+
+        self.dialog_position = c_dialog.do_action_text(bot, chat_id, text, global_state)
         return self
 
     def accept_voice_message(self, bot: BotBase, chat_id: str, voice_message, global_state: State) -> 'LevelBase':
-        pass
+        c_dialog = self.current_dialog()
+        if isinstance(c_dialog, EndLevelAction):
+            # todo next-level
+            return self
 
-    def next_line(self):
-        self.evaluate_next_line(self.current_dialog[self.n])
+        speech = Speech()
+        text = speech.speech_to_text(voice_message)
 
-    def evaluate_next_line(self, next_line: str):
-        params = self.extract_line_params(self.current_dialog[0])
-        if 'w' in params:
-            valid_keywords = params['w']
-            if valid_keywords == None:
-                self.n += 1
-            elif any(keyword in next_line for keyword in valid_keywords):
-                pass
-        if 't' in params:
-            self.send_type = "iterative"
-        if 'd' in params:
-            self.send_type = "delayed"
-
-    def trim_line(self, next_line: str):
-        return next_line.split("] ")[2]
+        self.dialog_position = c_dialog.do_action_voice(bot, chat_id, text, global_state)
+        return self
