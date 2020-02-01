@@ -85,11 +85,11 @@ class BotRepair(BotBase):
     def schedule_message(self, chat_id, text: str, delay: timedelta):
         return self.updater.dispatcher.job_queue.run_once(lambda x: self.send_text(chat_id, text), delay)
 
-    def delayed_type_message(self, chat_id, text: str, time_per_word: timedelta):
-        return self.updater.dispatcher.job_queue.run_once(lambda x: self.send_text(chat_id, text), delay)
-
-    def update_message(self, chat_id, text: str, delay: timedelta):
-        pass
+    def delayed_type_message(self, chat_id: str, text: str, time_per_word: timedelta):
+        message = self.send_text(chat_id, text[0])
+        for i in range(1, len(text)):
+            partial_text = text[0:i].strip()
+            self.updater.dispatcher.job_queue.run_once(lambda x: message.edit_text(partial_text), time_per_word * i)
 
 
 if __name__ == "__main__":
