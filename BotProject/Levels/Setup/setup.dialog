@@ -6,25 +6,27 @@
 [i=r, 5] I am sorry. I don't know. My storage circuits must have been damaged.
 [i] Would you be so kind and tell me *tzzzt* how you want to refer *brbrbrbrbr* to me?
 [s=robot_name]
-[i] $robot_name ? Is this correct?
-[c=12, 10]
+[i] $robot_name? Is this correct?
+[c=~5, ~1]
 [i] It is not??? Okay... How do you want to call me instead?
-[c=10, 8]
-[i] $robot_name ? Is this correct?
+[s=robot_name]
+[i] $robot_name ? Is this correct this time?
+[c=~1, ~-3]
 [i=d] *Writing*
-[i] Alright! {{Robot_Name}} it is then!
-[s=name]
+[i] Alright! $robot_name it is, then!
 [i] And you are?
-[c=16, 14]
-[i] $user_name ? Are you sure about this?
-[c=16, 14]
-[s=name] Uhm... okay. I don't know why you would lie to me in the first place... but what is your name then?
-[i] So it's $user_name ?
+[s=name]
+[i] $user_name? Are you sure about this?
+[c=~5, ~1]
+[i=3] Uhm... okay. I don't know why you would lie to me in the first place... but what is your name then?
+[s=name]
+[i] So it's $user_name?
+[c=~1, ~-3]
 [i=d] *Writing*
 [i] Splendid!
-[i] I am $robot_name , nice to meet you $user_name !
-[c=20, 20]
+[i] I am $robot_name , nice to meet you $user_name!
 [i] I suppose you are a human, correct?
+[c=20, 20]
 [i] I am only allowed to receive technical support from real human beings. Could you please solve this captcha?
 [STARTCAPTCHA1]
 [i] --- I AM SORRY, THIS WAS NOT RIGHT ---
