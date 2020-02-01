@@ -3,7 +3,6 @@ import os
 from abc import ABCMeta
 from enum import Enum, unique
 
-from future.moves.tkinter import dialog
 from telegram import ChatAction
 
 from BotBase import BotBase
@@ -108,7 +107,6 @@ class ImmediateNextAction(DialogAction):
 
         elif self.mode == DialogMode.DELAYED:
             tmp = self.get_text(global_state)
-            print(tmp)
             bot.delayed_type_message(chat_id, tmp, lambda: callback(self.next_index()))
 
         elif self.mode == DialogMode.ITERATIVE:
@@ -142,13 +140,14 @@ class WaitForTextAction(DialogAction):
             if param in text:
                 correct = correct + 1
 
-        if correct > 1 or len(self.params) == 0:
-            return self.next_index()
+        if correct >= 1 or len(self.params) == 0:
+            callback(self.next_index())
+            return
 
         _text = self.text if self.text else self.get_unknown_command_text()
 
         bot.send_chat_action(chat_id, ChatAction.TYPING)
-        bot.schedule_message(chat_id, _text, 1, lambda: callback(self.index))
+        bot.schedule_message(chat_id, _text, 1, lambda: callback(self.index - 1))
 
 
 class WaitForAudioAction(DialogAction):
@@ -159,14 +158,14 @@ class WaitForAudioAction(DialogAction):
             if param in text:
                 correct = correct + 1
 
-        if correct > 1 or len(self.params) == 0:
+        if correct >= 1 or len(self.params) == 0:
             callback(self.next_index())
             return
 
         _text = self.text if self.text else self.get_unknown_command_text()
 
         bot.send_chat_action(chat_id, ChatAction.TYPING)
-        bot.schedule_message(chat_id, _text, 1, lambda: callback(self.index))
+        bot.schedule_message(chat_id, _text, 1, lambda: callback(self.index - 1))
 
 
 class ChoiceAction(DialogAction):
@@ -209,8 +208,11 @@ class SendPictureAction(DialogAction):
         self.__send_picture(bot, chat_id, callback)
 
     def __send_picture(self, bot: BotBase, chat_id: str, callback):
+        image_path = SetupLevel.current_dir().__str__() + '/' + self.params[0]
+
         bot.send_chat_action(chat_id, ChatAction.UPLOAD_PHOTO)
-        bot.send_image(chat_id, self.params[0])
+        bot.send_image(chat_id, open(image_path, 'rb'))
+
         callback(self.next_index())
 
 
@@ -220,12 +222,15 @@ class EndLevelAction(DialogAction):
 
 class SetupLevel(LevelBase):
 
+    @staticmethod
+    def current_dir():
+        return os.path.dirname(os.path.realpath(__file__))
+
     def __init__(self):
         current_dialog = io.open(
-            os.path.dirname(os.path.realpath(__file__))
+            self.current_dir()
             # + os.path.basename(__file__).lower()
-            + '/setup'
-            + ".dialog", mode="r", encoding="UTF-8"
+            + '/setup' + ".dialog", mode="r", encoding="UTF-8"
         ).readlines()
 
         self.dialog_position = 1
@@ -292,8 +297,8 @@ class SetupLevel(LevelBase):
         speech = Speech()
         text = speech.speech_to_text(voice_message)
 
-        c_dialog.do_action_text(bot, chat_id, text, global_state,
-                                lambda dialog_pos: self.walk_dialog(dialog_pos, bot, chat_id, text, global_state))
+        c_dialog.do_action_voice(bot, chat_id, text, global_state,
+                                lambda dialog_pos: self.walk_dialog_voice(dialog_pos, bot, chat_id, text, global_state))
 
         return self
 
@@ -301,10 +306,20 @@ class SetupLevel(LevelBase):
         self.dialog_position = dialog_position
 
         c_dialog = self.current_dialog()
-        print(self.dialog_position)
 
         if not self.is_send_action(c_dialog):
             return
 
         c_dialog.do_action_text(bot, chat_id, text, global_state,
+                                lambda dialog_pos: self.walk_dialog(dialog_pos, bot, chat_id, text, global_state))
+
+    def walk_dialog_voice(self, dialog_position: int, bot: BotBase, chat_id: str, text: str, global_state: State):
+        self.dialog_position = dialog_position
+
+        c_dialog = self.current_dialog()
+
+        if not self.is_send_action(c_dialog):
+            return
+
+        c_dialog.do_action_voice(bot, chat_id, text, global_state,
                                 lambda dialog_pos: self.walk_dialog(dialog_pos, bot, chat_id, text, global_state))

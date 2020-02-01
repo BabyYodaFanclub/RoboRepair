@@ -9,11 +9,11 @@ class BotBase(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def send_image(self, chat_id: str, image: str):
+    def send_image(self, chat_id: str, image):
         pass
 
     @abstractmethod
-    def send_voice_message(self, chat_id: str, voice_message: str):
+    def send_voice_message(self, chat_id: str, voice_message):
         pass
 
     @abstractmethod

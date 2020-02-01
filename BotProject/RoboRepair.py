@@ -10,6 +10,7 @@ from telegram.ext import Updater
 from BotBase import BotBase
 from DummyLevel import DummyLevel
 from LevelBase import LevelBase
+from Levels.Setup.SetupLevel import SetupLevel
 from State import State
 
 
@@ -62,7 +63,7 @@ class BotRepair(BotBase):
 
     @staticmethod
     def __create_new_chat_session():
-        return {'initialized': True, 'state': State(), 'current_level': DummyLevel()}
+        return {'initialized': True, 'state': State(), 'current_level': SetupLevel()}
 
     def __start_callback(self, update: Update, context: CallbackContext):
         self.__ensure_session(context)
@@ -104,6 +105,7 @@ class BotRepair(BotBase):
         self.updater.dispatcher.chat_data[chat_id]['current_level'] = level
 
     def send_text(self, chat_id: str, text: str) -> Message:
+        text = text.strip()
         return Bot(self.bot_token).send_message(chat_id, text)
 
     def send_image(self, chat_id: str, image) -> Message:
@@ -116,11 +118,12 @@ class BotRepair(BotBase):
         return Bot(self.bot_token).send_chat_action(chat_id, action)
 
     def schedule_message(self, chat_id, text: str, delay: timedelta, callback):
+        text = text.strip()
         return self.updater.dispatcher.job_queue.run_once(
-            lambda x: self.schedule_message(chat_id, text, delay, callback),
+            lambda x: self.__send_scheduled_message(chat_id, text, callback),
             delay)
 
-    def send_scheduled_message(self, chat_id, text, callback):
+    def __send_scheduled_message(self, chat_id, text, callback):
         self.send_text(chat_id, text)
         callback()
 
