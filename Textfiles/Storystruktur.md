@@ -17,7 +17,6 @@ Das Bild ist verzerrt, seine Augen müssen falsch eingestellt sein, weise ihn an
 Alles hat geklappt! Die Augen von Robo funktionieren fast wie neu!
 Robo erzählt ein bisschen von sich. Er ist Kurier für ein Intergalaktisches Express Lieferservice von Luxusgütern. Wenn er sein Paket nicht bald abliefern kann wird man ihn wohl feuern, die Arbeitsbedingungen sind ziemlich hart. Als er sich auf den Weg zu seinem Schiff machen will fällt ihm auf, dass seine Beine nicht funktionieren.
 ## Rätsel 2 – Auftreibung eines Lötkolbens
-
 Robo muss mithilfe des Spielers seine Beine reparieren. Er kann sich zwischen zwei oder drei Orten bewegen, allerdings nur sehr langsam, da er langsam kriechen muss. Der Ortswechsel geschieht in wenigen Minuten Echtzeit.
 
 Robo muss sein Bein und einen Lötkolben finden. Das Bein befindet sich direkt vor ihm, der Lötkolben befindet sich im Eingang des Raumschiffs. Das Problem ist, dass das Raumschiff verschlossen ist. Durch den Unfall ist das Raumschiff in den Wartungsmodus geschaltet worden. Dieser lässt sich nur durch den Klang einer menschlichen Stimme

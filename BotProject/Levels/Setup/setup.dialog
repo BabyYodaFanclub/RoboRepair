@@ -1,5 +1,6 @@
 [t] [w] HILFE مساعدة ПОМОГНЕ AYUDA ДАПАМОГА YARDIM AIDEZ-MOI MSAADA HJELP 助けて AIUTO HELPO मदद HELPEN 도움 POMOZITE 救命 HELP
-[r] [i] *brrzzzt* Oh Hello there!
+[r] [d] *brrzzzt*
+[r] [i] Oh Hello there!
 [r] [i] I am...
 [d] [i=2] *Calculating*
 [r] [i=5] I am sorry. I don't know. My storage circuits must have been damaged.
@@ -23,4 +24,7 @@
 [STARTCAPTCHA2]
 [r] [i] GREAT! *happy beeping* Now for a last test! Say the following:
 [d] [a="I am a human"] "I AM A NORMAL HUMAN"
-[r] [i] SUPERB! Now I am convinced
+[r] [i=2] SUPERB! Now I am convinced.
+[r] [i] I can immediatly start with my first complaint...
+[d] [i] I...
+[r] [i] Can't see anything...
