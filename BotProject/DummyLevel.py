@@ -18,8 +18,8 @@ class DummyLevel(LevelBase):
         bot.send_chat_action(chat_id, ChatAction.TYPING)
         # bot.delayed_type_message(chat_id, f'Hallo!\n{text}')
         bot.send_iteratively_edited_message(chat_id,
-                                            'HILFE مساعدة ПОМОГНЕ AYUDA ДАПАМОГА YARDIM AIDEZ-MOI MSAADA HJELP 助けて AIUTO HELPO मदद HELPEN 도움 POMOZITE 救命 HELP'.split(
-                                                ' '))
+                                            'HILFE مساعدة ПОМОГНЕ AYUDA ДАПАМОГА YARDIM AIDEZ-MOI MSAADA HJELP 助けて AIUTO HELPO मदद HELPEN 도움 POMOZITE 救命 HELP'
+                                            .split(' '))
 
         return self
 

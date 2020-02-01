@@ -1,0 +1,42 @@
+[
+  {
+    "name": "Crash Site",
+    "available_items": [
+      "Leg"
+    ],
+    "connected_to": [
+      [
+        "In front of the Wreckage",
+        2
+      ]
+    ]
+  },
+  {
+    "name": "In front of the Wreckage",
+    "available_items": [
+      "Door"
+    ],
+    "connected_to": [
+      [
+        "Wreckage",
+        1
+      ],
+      [
+        "Crash Site",
+        2
+      ]
+    ]
+  },
+  {
+    "name": "Wreckage",
+    "available_items": [
+      "Soldering iron"
+    ],
+    "connected_to": [
+      [
+        "In front of the Wreckage",
+        1
+      ]
+    ]
+  }
+]
