@@ -124,7 +124,7 @@ class BotRepair(BotBase):
                                                    time_per_message)
 
     def __iteratively_edit_message(self, message: Message, texts: list, current_item: int, time_per_message: timedelta):
-        if self.iterating_chats[message.chat_id] != message.message_id:
+        if self.iterating_chats[message.chat_id] != message.message_id or current_item > 50:
             return
 
         message = message.edit_text(texts[current_item % len(texts)])
