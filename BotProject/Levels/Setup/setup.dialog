@@ -1,20 +1,21 @@
-[w] [t] HILFE مساعدة ПОМОГНЕ AYUDA ДАПАМОГА YARDIM AIDEZ-MOI MSAADA HJELP 助けて AIUTO HELPO मदद HELPEN 도움 POMOZITE 救命 HELP
-[i] [r] *brrzzzt* Oh Hello there!
-[i] [r] I am...
-[i=2] [d] *Calculating*
-[i] [r] I am sorry. I don't know. My storage circuits must have been damaged.
-[s] [r] Would you be so kind and tell me *tzzzt* how you want to refer *brbrbrbrbr* to me?
-[c] [r] {{Robot_Name}}? Is this correct?
-[i] [d] *Writing*
-[i] [r] Alright! {{Robot_Name}} it is then!
-[s] [r] And you are?
-[c] [r] {{User_name}}? Are you sure about this?
-[i] [d] *Writing*
-[i] [r] Splendid! I am {{Robot_Name}}, nice to meet you {{User_name}}!
-[c] [r] I suppose you are a human, correct?
-[i] [r] I am only allowed to receive technical support from real human beings. Could you please solve this captcha?
+[t] [w] HILFE مساعدة ПОМОГНЕ AYUDA ДАПАМОГА YARDIM AIDEZ-MOI MSAADA HJELP 助けて AIUTO HELPO मदद HELPEN 도움 POMOZITE 救命 HELP
+[r] [i] *brrzzzt* Oh Hello there!
+[r] [i] I am...
+[d] [i=2] *Calculating*
+[r] [i=5] I am sorry. I don't know. My storage circuits must have been damaged.
+[r] [s] Would you be so kind and tell me *tzzzt* how you want to refer *brbrbrbrbr* to me?
+[r] [c] {{Robot_Name}}? Is this correct?
+[d] [i] *Writing*
+[r] [i] Alright! {{Robot_Name}} it is then!
+[r] [s] And you are?
+[r] [c] {{User_name}}? Are you sure about this?
+[d] [i] *Writing*
+[r] [i] Splendid! I am {{Robot_Name}}, nice to meet you {{User_name}}!
+[c] [i] I suppose you are a human, correct?
+[r] [i] I am only allowed to receive technical support from real human beings. Could you please solve this captcha?
 [STARTCAPTCHA1]
-[i] [r] --- I AM SORRY, THIS WAS NOT RIGHT ---
+[r] [i] --- I AM SORRY, THIS WAS NOT RIGHT ---
 [STARTCAPTCHA2]
-[i] [r] GREAT! *happy beeping* Now for a last test! Say the following:
-[a="I am a human"] [d] "I AM A NORMAL HUMAN"
+[r] [i] GREAT! *happy beeping* Now for a last test! Say the following:
+[d] [a="I am a human"] "I AM A NORMAL HUMAN"
+[r] [i] SUPERB! Now I am convinced
