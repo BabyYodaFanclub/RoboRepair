@@ -4,7 +4,15 @@
 #We Manufacture Robots - Manual
 
 ## Introduction
-Hello fellow Robot maintenance guy-. Yuu are the backbone of our Company, but you can't work without knowing the gist of our bots. So follow this manual carefully and everything will be fine. If you have problems. Well shit. We won't solve them.
+Hello fellow Robot maintenance guy-. Yuu are the backbone of our Company, but you can't work without knowing the gist of our bots. So follow this manual carefully and everything will be fine. If you have problems. Well shit. We won't solve them. Or maybe we do!
+Please don't sue us.
+
+## Introduction_2
+IF YOU HAVE ANY PROBLEMS NOT SOLVED IN THE ROBOTS TAB, PLEASE LOOK AT THE BOTTOM OF THIS DOCUMENT FOR GENERAL TROUBLESHOOTING
+ROBOTSタブで解決されない問題がある場合は、一般的なトラブルシューティングについてこのドキュメントの最後をご覧ください
+如果您在机器人标签中没有解决任何问题，请查看本文档底部的一般故障排除
+WENN SIE PROBLEME HABEN, DIE IM ROBOTS-TAB NICHT GELÖST WURDEN, BITTE UNTEN IN DIESEM DOKUMENT AUF ALLGEMEINE FEHLERBEHEBUNG SUCHEN
+
 
 ## Robocatalogue
  --Also on Casette or Datasette, write our customer support.
@@ -645,6 +653,11 @@ W M R（私たちはロボットを製造しています）は、特定の状況
 ## General Troubleshooting
 To restart the visual sensors, send the bot the following Message:
 "Hokus Pokus Camerus Restartikus" followed by it's unique Restarting Codec found in the Robocatalogue. WMR is never guilty, ask our lawyers and over 7000 successfull lawsuits against anyone who dares to challenge us. Please buy our products.
+
+__COOL TIP__
+If the Visual Sensors of one of our Robots is out of center use the Autofocus fucntion. Just text your Bot: "USE THE AUTOFOCUS"
+Another thing: If your Bots vision is a little bit distorted, activate it's coordinate system via the following command: "ACTIVATE COORDINATESYSTEM".
+Once active use "RESET_X" and "RESET_Y" to reset the respective axes.
 
 ## Special Thanks from the Boss
 Hey People. I am the Boss. I just wanted to thank you for supporting our humble business. As everyone should know our biggest invention yet were the atomic bombs which destroyed the earth in 2021. Since then everything has been better and I am a hell lotta richer. HAHAHA I have more money than you. Good night, sir or madam or whatever. I don't care for you or anyone. I love Money!
