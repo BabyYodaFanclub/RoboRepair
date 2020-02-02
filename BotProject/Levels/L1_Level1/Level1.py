@@ -1,9 +1,17 @@
+from AbstractLevel import AbstractLevel
 from BotBase import BotBase
-from LevelBase import LevelBase
+from ChatType import ChatType
+from MessageSequence import MessageSequence
 from State import State
 
 
-class Level1(LevelBase):
+class Level1(AbstractLevel):
+
+    def level_resume(self, bot: BotBase, global_state: State, chat_type: ChatType, message) -> 'LevelBase':
+        pass
+
+    def end(self, global_state: State) -> 'LevelBase':
+        pass
 
     def __init__(self):
         self.has_entered_serial = False
@@ -13,13 +21,11 @@ class Level1(LevelBase):
         self.distortion_y = 1
         self.coordinate_system = False
 
-    def accept_text_message(self, bot: BotBase, chat_id: str, text: str, global_state: State) -> 'LevelBase':
-        pass
-
-    def accept_voice_message(self, bot: BotBase, chat_id: str, voice_message, global_state: State) -> 'LevelBase':
-        pass
+        self.message_sequence = MessageSequence("00_start", lambda x: self.end_dialog_1())
 
     def check_for_win(self) -> bool:
         return self.has_entered_serial and self.brightness == 100 and self.focus \
             and self.distortion_x == 0 and self.distortion_y == 0
 
+    def end_dialog_1(self):
+        self.message_sequence = None
