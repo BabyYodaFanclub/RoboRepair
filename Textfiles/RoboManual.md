@@ -657,8 +657,9 @@ To restart the visual sensors, send the bot the following Message:
 "Hokus Pokus Camerus Restartikus" followed by it's unique Restarting Codec found in the Robocatalogue. WMR is never guilty, ask our lawyers and over 7000 successfull lawsuits against anyone who dares to challenge us. Please buy our products.
 
 __COOL TIP__
-If the Visual Sensors of one of our Robots is out of center use the Autofocus fucntion. Just text your Bot: "USE THE AUTOFOCUS"
+If the Visual Sensors of one of our Robots is out of center use the Autofocus function. Just text your Bot: "USE THE AUTOFOCUS"
 Another thing: If your Bots vision is a little bit distorted, activate it's coordinate system via the following command: "ACTIVATE COORDINATESYSTEM". Use "DEACTIVATE COORDINATESYSTEM" to deactivate it again.
+If the screen is too bright, try "REDUCE BRIGHTNESS", this might be applied multiple times.
 Once active use "RESET_X" and "RESET_Y" to reset the respective axes.
 
 ## Special Thanks from the Boss
