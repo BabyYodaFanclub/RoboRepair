@@ -136,8 +136,9 @@ class WaitForTextAction(DialogAction):
 
     def do_action_text(self, bot: BotBase, chat_id: str, text: str, global_state: State, callback):
         correct = 0
+        text = text.lower().strip()
         for param in self.params:
-            if param in text:
+            if param.lower().strip() in text:
                 correct = correct + 1
 
         if correct >= 1 or len(self.params) == 0:
@@ -154,8 +155,9 @@ class WaitForAudioAction(DialogAction):
 
     def do_action_voice(self, bot: BotBase, chat_id: str, text: str, global_state: State, callback):
         correct = 0
+        text = text.lower().strip()
         for param in self.params:
-            if param in text:
+            if param.lower().strip() in text:
                 correct = correct + 1
 
         if correct >= 1 or len(self.params) == 0:
