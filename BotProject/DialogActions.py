@@ -2,6 +2,8 @@
 from abc import ABCMeta, abstractmethod
 from datetime import timedelta
 from enum import Enum, unique
+from random import random
+import io
 
 from telegram import ChatAction
 
@@ -22,11 +24,12 @@ class DialogMode(Enum):
 
 class DialogActionFactory:
 
-    def __init__(self, path, yes, no):
+    yes = ['yes'] # current_dialog = io.open('./Levels/YES.dialog', mode="r", encoding="UTF-8").readlines()
+    no = ['no'] # current_dialog = io.open('./Levels/NO.dialog', mode="r", encoding="UTF-8").readlines()
+
+    def __init__(self, path):
         self.path = path + '/'
         self.index = 0
-        self.yes = yes
-        self.no = no
 
     def create(self, _type: str, params, text: str):
         text = text.strip()
@@ -83,11 +86,13 @@ class DialogAction(metaclass=ABCMeta):
                              DialogAction.get_unknown_command_text() if text == '' else text,
                              1, lambda: None)
 
+    __unknown_commands = current_dialog = io.open('./Levels/UNKNOWNCOMMAND.dialog',
+                                                  mode="r",
+                                                  encoding="UTF-8").readlines()
 
     @staticmethod
     def get_unknown_command_text():
-        # @todo read UNKNOWNCOMMMADN.dialog
-        return 'Unknown Command'
+        return random.choice(DialogAction.__unknown_commands)
 
 
 class EndLevelAction(DialogAction):
