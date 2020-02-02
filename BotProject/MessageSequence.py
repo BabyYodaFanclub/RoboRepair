@@ -21,7 +21,7 @@ class MessageSequence:
 
         self.actions = []
 
-        dialog_factory = DialogActionFactory(path, ['yes'], ['no'])
+        dialog_factory = DialogActionFactory(path)
         for line in current_dialog:
 
             tmp = line.split(']')
