@@ -3,15 +3,10 @@ from BotBase import BotBase
 from ChatType import ChatType
 from MessageSequence import MessageSequence
 from State import State
+from DialogActions import ImmediateNextAction
 
 
 class Level1(AbstractLevel):
-
-    def level_resume(self, bot: BotBase, global_state: State, chat_type: ChatType, message) -> 'LevelBase':
-        pass
-
-    def end(self, global_state: State) -> 'LevelBase':
-        pass
 
     def __init__(self):
         self.has_entered_serial = False
@@ -21,7 +16,36 @@ class Level1(AbstractLevel):
         self.distortion_y = 1
         self.coordinate_system = False
 
-        self.message_sequence = MessageSequence("00_start", lambda x: self.end_dialog_1())
+        self.message_sequence = MessageSequence(self.current_dir(), "00_start", lambda x: self.end_dialog_1())
+
+        self.valid_keys = {
+            "How can I help": lambda: self.set_message_sequence("help"),
+            "What is your model?": lambda: self.set_message_sequence("model"),
+            "Which model are you?": lambda: self.set_message_sequence("model")
+
+        }
+
+    def set_message_sequence(self, name: str):
+        self.message_sequence = MessageSequence(self.current_dir(), "help", self.end_message_sequence)
+
+    def get_file(self):
+        return __file__
+
+    def level_resume(self, bot: BotBase, global_state: State, chat_type: ChatType, message) -> 'LevelBase':
+        if chat_type is ChatType.VOICE:
+            ImmediateNextAction("", 0, []).send_error(bot, global_state, lambda: None)
+            return
+
+        for key, val in self.valid_keys.items():
+            if message in key:
+                val()
+        return self
+
+
+    def end(self, global_state: State) -> 'LevelBase':
+        pass
+
+
 
     def check_for_win(self) -> bool:
         return self.has_entered_serial and self.brightness == 100 and self.focus \

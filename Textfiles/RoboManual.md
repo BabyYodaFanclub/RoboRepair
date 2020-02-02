@@ -13,6 +13,8 @@ ROBOTSタブで解決されない問題がある場合は、一般的なトラ�
 如果您在机器人标签中没有解决任何问题，请查看本文档底部的一般故障排除
 WENN SIE PROBLEME HABEN, DIE IM ROBOTS-TAB NICHT GELÖST WURDEN, BITTE UNTEN IN DIESEM DOKUMENT AUF ALLGEMEINE FEHLERBEHEBUNG SUCHEN
 
+## Introduction_3
+Also: Your Robot always has to identify himself. Just ask him what his Model is!
 
 ## Robocatalogue
  --Also on Casette or Datasette, write our customer support.
@@ -656,7 +658,7 @@ To restart the visual sensors, send the bot the following Message:
 
 __COOL TIP__
 If the Visual Sensors of one of our Robots is out of center use the Autofocus fucntion. Just text your Bot: "USE THE AUTOFOCUS"
-Another thing: If your Bots vision is a little bit distorted, activate it's coordinate system via the following command: "ACTIVATE COORDINATESYSTEM".
+Another thing: If your Bots vision is a little bit distorted, activate it's coordinate system via the following command: "ACTIVATE COORDINATESYSTEM". Use "DEACTIVATE COORDINATESYSTEM" to deactivate it again.
 Once active use "RESET_X" and "RESET_Y" to reset the respective axes.
 
 ## Special Thanks from the Boss
