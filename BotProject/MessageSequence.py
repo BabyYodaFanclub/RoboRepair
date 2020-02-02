@@ -4,19 +4,14 @@ import os
 from BotBase import BotBase
 from ChatType import ChatType
 from State import State
-from DialogActions import DialogActionFactory, DialogOutputAction
+from DialogActions import DialogActionFactory, DialogOutputAction, EndLevelAction
 
 
 class MessageSequence:
 
-    @staticmethod
-    def current_dir():
-        return os.path.dirname(os.path.realpath(__file__))
-
-    def __init__(self, name, end_callback: callable):
+    def __init__(self, path, name, end_callback: callable):
         current_dialog = io.open(
-            self.current_dir()
-            # + os.path.basename(__file__).lower()
+            path
             + '/' + name + ".dialog", mode="r", encoding="UTF-8"
         ).readlines()
 
@@ -26,37 +21,62 @@ class MessageSequence:
 
         self.actions = []
 
-        i = 1
+        dialog_factory = DialogActionFactory(path, ['yes'], ['no'])
         for line in current_dialog:
 
             tmp = line.split(']')
             tmp = list(map(lambda b: b.replace('[', ''), tmp))
 
-            if '=' in tmp[0]:
-                t, settings = tmp[0].split('=')
-            else:
-                t, settings = [tmp[0], '']
+            t, settings = tmp[0].split('=') if '=' in tmp[0] else [tmp[0], '']
 
             params = settings.split(',') if len(settings) > 0 else []
 
-            if len(tmp) > 1:
-                text = tmp[1]
-            else:
-                text = ''
+            text = tmp[1] if len(tmp) > 1 else ''
 
-            self.actions.append(DialogActionFactory.create(t, params, text, i))
-            i = i + 1
+            self.actions.append(dialog_factory.create(t, params, text))
 
     def current_dialog(self):
+        if self.dialog_position >= len(self.actions) or self.dialog_position < 0:
+            return EndLevelAction
+
         return self.actions[self.dialog_position - 1]
 
     def start(self, bot: BotBase, global_state: State):
         current = self.current_dialog()
+        if isinstance(current, EndLevelAction):
+            self.end()
+            return
+
         if isinstance(current, DialogOutputAction):
-            current.send(bot, global_state, lambda x: self.set_current_dialog(x))
+            current.send(bot, global_state,
+                         lambda pos: self.walk_dialog(bot, global_state, pos))
 
     def resume(self, bot: BotBase, global_state: State, chat_type: ChatType, message):
-        pass
+        current = self.current_dialog()
+
+        print(current)
+
+        if isinstance(current, EndLevelAction):
+            self.end()
+            return
+
+        print('test')
+
+        current.do(bot, global_state, message, chat_type,
+                   lambda pos: self.walk_dialog(bot, global_state, pos))
 
     def end(self):
         self.end_callback()
+
+    def walk_dialog(self, bot: BotBase, global_state: State, dialog_position: int):
+        self.dialog_position = dialog_position
+
+        current = self.current_dialog()
+
+        if isinstance(current, EndLevelAction):
+            self.end()
+            return
+
+        if isinstance(current, DialogOutputAction):
+            current.send(bot, global_state,
+                         lambda pos: self.walk_dialog(bot, global_state, pos))

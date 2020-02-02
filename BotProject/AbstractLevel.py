@@ -1,4 +1,4 @@
-from abc import abstractmethod
+from abc import abstractmethod, ABCMeta
 import os
 
 from BotBase import BotBase
@@ -9,25 +9,27 @@ from State import State
 from ChatType import ChatType
 
 
-class AbstractLevel(LevelBase):
+class AbstractLevel(LevelBase, metaclass=ABCMeta):
 
     is_level_finished = False
 
-    @staticmethod
-    def current_dir():
-        return os.path.dirname(os.path.realpath(__file__))
+    def current_dir(self):
+        return os.path.dirname(os.path.realpath(self.get_file()))
 
     def __init__(self):
         self.message_sequence = None
+
+    @abstractmethod
+    def get_file(self):
         pass
 
     def accept_chat_start(self, bot: BotBase, chat_id: str, global_state: State) -> 'LevelBase':
         global_state.chat_id = chat_id
-        self.start(bot, global_state)
+        return self.start(bot, global_state)
 
     def accept_text_message(self, bot: BotBase, chat_id: str, text: str, global_state: State) -> 'LevelBase':
         global_state.chat_id = chat_id
-        self.resume(bot, global_state, ChatType.TEXT, text)
+        return self.resume(bot, global_state, ChatType.TEXT, text)
 
     def accept_voice_message(self, bot: BotBase, chat_id: str, voice_message, global_state: State) -> 'LevelBase':
         global_state.chat_id = chat_id
@@ -35,7 +37,7 @@ class AbstractLevel(LevelBase):
         speech = Speech()
         text = speech.speech_to_text(voice_message)
 
-        self.resume(bot, global_state, ChatType.VOICE, text)
+        return self.resume(bot, global_state, ChatType.VOICE, text)
 
     def start(self, bot: BotBase, global_state: State) -> 'LevelBase':
         return self
@@ -63,3 +65,5 @@ class AbstractLevel(LevelBase):
     def set_level_completed(self):
         self.is_level_finished = True
 
+    def end_message_sequence(self):
+        self.message_sequence = None

@@ -21,22 +21,33 @@ class DialogMode(Enum):
 
 class DialogActionFactory:
 
-    @staticmethod
-    def create(type: str, params, text: str, index):
-        if type == 'i':
-            return ImmediateNextAction(text, index, params)
-        if type == 'w':
-            return WaitForTextAction(text, index, params)
-        if type == 'a':
-            return WaitForAudioAction(text, index, params)
-        if type == 'c':
-            return ChoiceAction(text, index, params)
-        if type == 's':
-            return SaveVarAction(text, index, params)
-        if type == 'p':
-            return SendPictureAction(text, index, params)
-        if type == 'e':
-            return EndLevelAction(text, index, params)
+    def __init__(self, path, yes, no):
+        self.path = path + '/'
+        self.index = 0
+        self.yes = yes
+        self.no = no
+
+    def create(self, _type: str, params, text: str):
+        text = text.strip()
+        self.index = self.index + 1
+        if _type == 'i':
+            return ImmediateNextAction(text, self.index, params)
+        if _type == 'w':
+            params = list(map(lambda p: p.strip().lower(), params))
+            return WaitForTextAction(text, self.index, params)
+        if _type == 'a':
+            params = list(map(lambda p: p.strip().lower(), params))
+            return WaitForAudioAction(text, self.index, params)
+        if _type == 'c':
+            params = [self.yes, self.no, *params]
+            return ChoiceAction(text, self.index, params)
+        if _type == 's':
+            return SaveVarAction(text, self.index, params)
+        if _type == 'p':
+            params[0] = self.path + params[0]
+            return SendPictureAction(text, self.index, params)
+        if _type == 'e':
+            return EndLevelAction(text, self.index, params)
 
 
 class DialogAction(metaclass=ABCMeta):
@@ -49,24 +60,30 @@ class DialogAction(metaclass=ABCMeta):
         self.params = params
         self.text = text
 
-    # def do_action_text(self, bot: BotBase, chat_id: str, text: str, global_state: State, callback):
-    #     bot.send_chat_action(chat_id, ChatAction.TYPING)
-    #     bot.schedule_message(chat_id, DialogAction.get_unknown_command_text(), 1, lambda: callback(self.index))
-    #
-    # def do_action_voice(self, bot: BotBase, chat_id: str, text: str, global_state: State, callback):
-    #     bot.send_chat_action(chat_id, ChatAction.TYPING)
-    #     bot.schedule_message(chat_id, DialogAction.get_unknown_command_text(), 1, lambda: callback(self.index))
+    def do(self, bot: BotBase, global_state: State, message, chat_type: ChatType, callback):
+        if isinstance(self, DialogOutputAction):
+            self.send(bot, global_state, callback)
+        elif isinstance(self, DialogInputAction):
+            self.receive(bot, global_state, message, chat_type, callback)
 
     def next_index(self):
         return self.index + 1
 
-    def __str__(self):
-        return self.index
+    def send_error(self, bot: BotBase, global_state: State, callback, text: str = ''):
+        bot.send_chat_action(global_state.chat_id, ChatAction.TYPING)
+        bot.schedule_message(global_state.chat_id,
+                             DialogAction.get_unknown_command_text() if text == '' else text,
+                             1, lambda: callback(self.index + 1))
 
     @staticmethod
     def get_unknown_command_text():
         # @todo read UNKNOWNCOMMMADN.dialog
         return 'Unknown Command'
+
+
+class EndLevelAction(DialogAction):
+    pass
+
 
 class DialogInputAction(DialogAction, metaclass=ABCMeta):
 
@@ -77,10 +94,39 @@ class DialogInputAction(DialogAction, metaclass=ABCMeta):
 
 class DialogOutputAction(DialogAction, metaclass=ABCMeta):
 
-    @abstractmethod
     def send(self, bot: BotBase, global_state: State, callback):
+        self.send_error(bot, global_state, callback)
+
+
+class DialogWaitForTypeAction(DialogInputAction, metaclass=ABCMeta):
+
+    @abstractmethod
+    def type(self) -> ChatType:
         pass
 
+    def receive(self, bot: BotBase, global_state: State, text: str, chat_type: ChatType, callback):
+        if chat_type is not self.type():
+            self.send_error(bot, global_state, chat_type, callback, self.text)
+            return
+
+        correct = 0
+        text = text.lower()
+        for param in self.params:
+            if param.lower().strip() in text:
+                correct = correct + 1
+
+        print(self.params)
+
+        if correct >= 1 or len(self.params) == 0:
+            callback(self.next_index())
+            return
+
+        self.send_error(bot, global_state, lambda: callback(self.index - 1), self.text)
+
+
+##################################
+#         Output-Actions         #
+##################################
 
 
 class ImmediateNextAction(DialogOutputAction):
@@ -107,13 +153,9 @@ class ImmediateNextAction(DialogOutputAction):
         self.text = text
         self.index = index
 
-    def do_action_text(self, bot: BotBase, chat_id: str, text: str, global_state: State, callback):
-        self.send_message(bot, chat_id, global_state, callback)
+    def send(self, bot: BotBase, global_state: State, callback):
+        chat_id = global_state.chat_id
 
-    def do_action_voice(self, bot: BotBase, chat_id: str, text: str, global_state: State, callback):
-        self.send_message(bot, chat_id, global_state, callback)
-
-    def send_message(self, bot: BotBase, chat_id: str, global_state: State, callback):
         if self.mode == DialogMode.REGULAR:
             bot.send_chat_action(chat_id, ChatAction.TYPING)
             bot.schedule_message(chat_id, self.get_text(global_state), 1, lambda: callback(self.next_index()))
@@ -145,57 +187,61 @@ class ImmediateNextAction(DialogOutputAction):
         return _text
 
 
-class WaitForTextAction(DialogAction):
+class SendPictureAction(DialogOutputAction):
 
-    def do_action_text(self, bot: BotBase, chat_id: str, text: str, global_state: State, callback):
-        correct = 0
-        text = text.lower().strip()
-        for param in self.params:
-            if param.lower().strip() in text:
-                correct = correct + 1
+    def send(self, bot: BotBase, global_state: State, callback):
+        image_path = self.params[0]
 
-        if correct >= 1 or len(self.params) == 0:
-            callback(self.next_index())
+        bot.send_chat_action(global_state.chat_id, ChatAction.UPLOAD_PHOTO)
+        bot.send_image(global_state.chat_id, open(image_path, 'rb'))
+
+        callback(self.next_index())
+
+
+##################################
+#         WaitFor-Actions        #
+##################################
+
+
+class WaitForTextAction(DialogWaitForTypeAction):
+
+    def type(self) -> ChatType:
+        return ChatType.TEXT
+
+
+class WaitForAudioAction(DialogWaitForTypeAction):
+
+    def type(self) -> ChatType:
+        return ChatType.VOICE
+
+##################################
+#          Input-Actions         #
+##################################
+
+
+class ChoiceAction(DialogInputAction):
+
+    def receive(self, bot: BotBase, global_state: State, text: str, chat_type: ChatType, callback):
+        if chat_type is ChatType.VOICE:
+            self.send_error(bot, global_state, chat_type, callback, self.text)
             return
 
-        _text = self.text if self.text else self.get_unknown_command_text()
-
-        bot.send_chat_action(chat_id, ChatAction.TYPING)
-        bot.schedule_message(chat_id, _text, 1, lambda: callback(self.index - 1))
-
-
-class WaitForAudioAction(DialogAction):
-
-    def do_action_voice(self, bot: BotBase, chat_id: str, text: str, global_state: State, callback):
-        correct = 0
-        text = text.lower().strip()
-        for param in self.params:
-            if param.lower().strip() in text:
-                correct = correct + 1
-
-        if correct >= 1 or len(self.params) == 0:
-            callback(self.next_index())
-            return
-
-        _text = self.text if self.text else self.get_unknown_command_text()
-
-        bot.send_chat_action(chat_id, ChatAction.TYPING)
-        bot.schedule_message(chat_id, _text, 1, lambda: callback(self.index - 1))
-
-
-class ChoiceAction(DialogAction):
-
-    def do_action_text(self, bot: BotBase, chat_id: str, text: str, global_state: State, callback):
         try:
-            result = self.evaluate_choice(text)
-            callback(self.calc_line_number(self.params[0 if result else 1]))
+            result = self.evaluate_choice(text.lower())
+            callback(self.calc_line_number(self.params[2 if result else 3]))
         except Exception as e:
             callback(self.index - 1)
 
     def evaluate_choice(self, text: str):
-        # @todo check valid answers!
-        # raise Error if not in yes and not in no list
-        return "yes" in text
+        for y in self.params[0]:
+            if y in text:
+                return True
+
+        for n in self.params[1]:
+            if n in text:
+                return False
+
+        raise Exception('No answer is given')
 
     def calc_line_number(self, number: str):
         relative = '~' in number
@@ -207,29 +253,12 @@ class ChoiceAction(DialogAction):
             return num
 
 
-class SaveVarAction(DialogAction):
+class SaveVarAction(DialogInputAction):
 
-    def do_action_text(self, bot: BotBase, chat_id: str, text: str, global_state: State, callback):
+    def receive(self, bot: BotBase, global_state: State, text: str, chat_type: ChatType, callback):
+        if chat_type is ChatType.VOICE:
+            self.send_error(bot, global_state, chat_type, callback, self.text)
+            return
+
         global_state.values[self.params[0]] = text
         callback(self.next_index())
-
-
-class SendPictureAction(DialogAction):
-
-    def do_action_text(self, bot: BotBase, chat_id: str, text: str, global_state: State, callback):
-        self.__send_picture(bot, chat_id, callback)
-
-    def do_action_voice(self, bot: BotBase, chat_id: str, text: str, global_state: State, callback):
-        self.__send_picture(bot, chat_id, callback)
-
-    def __send_picture(self, bot: BotBase, chat_id: str, callback):
-        image_path = SetupLevel.current_dir().__str__() + '/' + self.params[0]
-
-        bot.send_chat_action(chat_id, ChatAction.UPLOAD_PHOTO)
-        bot.send_image(chat_id, open(image_path, 'rb'))
-
-        callback(self.next_index())
-
-
-class EndLevelAction(DialogAction):
-    pass

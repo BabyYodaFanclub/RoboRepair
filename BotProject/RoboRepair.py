@@ -80,11 +80,20 @@ class BotRepair(BotBase):
         print(f'update: {update}')
         print(f'chat_data: {context.chat_data}')
 
-        context.chat_data['current_level'] = \
-            context.chat_data['current_level'].accept_text_message(self,
-                                                                   update.effective_chat.id,
-                                                                   update.effective_message.text,
-                                                                   context.chat_data['state'])
+        level = context.chat_data['current_level']
+        next_level = level.accept_text_message(self,
+                                               update.effective_chat.id,
+                                               update.effective_message.text,
+                                               context.chat_data['state'])
+
+        if next_level == level:
+            return
+
+        context.chat_data['current_level'] = next_level.accept_text_message(self,
+                                                                            update.effective_chat.id,
+                                                                            update.effective_message.text,
+                                                                            context.chat_data['state'])
+
 
     def __voice_callback(self, update: Update, context: CallbackContext):
         context.chat_data['last_message_timestamp'] = datetime.now()
@@ -95,11 +104,19 @@ class BotRepair(BotBase):
         print(f'chat_data: {context.chat_data}')
         print(f'user_data: {context.user_data}')
 
-        context.chat_data['current_level'] = \
-            context.chat_data['current_level'].accept_voice_message(self,
-                                                                    update.effective_chat.id,
-                                                                    update.effective_message.voice,
-                                                                    context.chat_data['state'])
+        level = context.chat_data['current_level']
+        next_level = level.accept_voice_message(self,
+                                                update.effective_chat.id,
+                                                update.effective_message.voice,
+                                                context.chat_data['state'])
+
+        if next_level == level:
+            return
+
+        context.chat_data['current_level'] = next_level.accept_voice_message(self,
+                                                                             update.effective_chat.id,
+                                                                             update.effective_message.voice,
+                                                                             context.chat_data['state'])
 
     def update_current_level(self, chat_id: str, level: LevelBase):
         self.updater.dispatcher.chat_data[chat_id]['current_level'] = level
