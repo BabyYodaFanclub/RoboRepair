@@ -1,0 +1,38 @@
+[i] Alright, give me a Minute.
+[i=t] . .. ... ..
+[i=r, 6] Okay, I'm here. Look at this!
+[p=locked.png]
+[i=r, 3] It's locked....
+[i=d] I CAN'T OPEN IT
+[i] I'M LOST HERE FOREVER!!!
+[i=d] ........
+[i] I just remembered something. I think a Human must say "OPEN LOCK" to open it. Loud and clearly.
+[i=d] Do it please *admiring beeping*
+[a=open lock]
+[p=open.png]
+[i] See??? It worked! Hooray! Let me go inside. Wait a second.
+[i=t] . .. ... ..
+[i=r, 5] Okay. I'm inside. Let me send you a picture
+[i=d] *S E N D I N G*
+[p=toolbox_full.png]
+[i] So...
+[i] What were we searching for?
+[w=blowtorch] No, that's not what we were looking for...
+[i] AH! Yes! I take it.
+[i=r, 2] Hnngh.
+[p=toolbox_empty.png]
+[i] Okay... What should I do now?
+[w=repair] No... not exactly.
+[p=repairing leg.png]
+[i=d] I... am... afraid....]
+[w]
+[i] Okay...
+[i] Here goes nothing.
+[i=t] OFFLINE --- OFFLINE --- OFFLINE ---
+[w]
+[i=d] It...
+[i] WORKED! You saved me $user_name! You are a hero!
+[i] THANK YOU SOOOOOO MUCH!
+[i=t] ❤ 🧡 💛 💚 💙 💜 🤎
+[i=r, 5] I write you once I delivered my package!
+[e]
