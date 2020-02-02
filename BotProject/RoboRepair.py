@@ -10,7 +10,7 @@ from telegram.ext import Updater
 from BotBase import BotBase
 from DummyLevel import DummyLevel
 from LevelBase import LevelBase
-from Levels.Setup.SetupLevel import SetupLevel
+from Levels.L0_Setup.SetupLevel import SetupLevel
 from State import State
 
 
