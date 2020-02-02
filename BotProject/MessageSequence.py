@@ -36,6 +36,9 @@ class MessageSequence:
             self.actions.append(dialog_factory.create(t, params, text))
 
     def current_dialog(self):
+        while callable(self.dialog_position):
+            self.dialog_position = self.dialog_position()
+
         if self.dialog_position >= len(self.actions) or self.dialog_position < 0:
             return EndLevelAction()
 

@@ -12,6 +12,7 @@ from DummyLevel import DummyLevel
 from LevelBase import LevelBase
 from Levels.L0_Setup.SetupLevel import SetupLevel
 from Levels.L1_Level1.Level1 import Level1
+from Levels.L2_Level2.Level2 import Level2
 from State import State
 
 

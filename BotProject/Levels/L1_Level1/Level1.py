@@ -2,7 +2,6 @@ from AbstractLevel import AbstractLevel
 from BotBase import BotBase
 from ChatType import ChatType
 from Levels.L2_Level2.Level2 import Level2
-from MessageSequence import MessageSequence
 from State import State
 from DialogActions import ImmediateNextAction, SendPictureAction
 
@@ -56,7 +55,6 @@ class Level1(AbstractLevel):
                 return
 
         ImmediateNextAction.static_send_error(bot, global_state)
-
 
     def end(self, global_state: State) -> 'LevelBase':
         return Level2()

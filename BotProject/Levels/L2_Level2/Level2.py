@@ -3,6 +3,7 @@ from BotBase import BotBase
 from ChatType import ChatType
 from DialogActions import ImmediateNextAction
 from State import State
+from Levels.L3_End.Level3 import Level3
 
 
 class Level2(AbstractLevel):
@@ -14,7 +15,7 @@ class Level2(AbstractLevel):
         self.has_blowtorch = False
         self.is_repaired = False
 
-        self.set_message_sequence("00_start", lambda: None)
+        self.set_message_sequence("00_start")
 
         self.valid_keys = {
             "take leg": lambda b, s: self.run_message_sequence(b, s, "01_take_leg", self.end_take_leg),
@@ -45,7 +46,7 @@ class Level2(AbstractLevel):
         ImmediateNextAction.static_send_error(bot, global_state)
 
     def end(self, global_state: State) -> 'LevelBase':
-        pass
+        return Level3()
 
     def check_for_win(self, global_state: State):
         pass
@@ -54,12 +55,14 @@ class Level2(AbstractLevel):
         self.message_sequence = None
 
     def end_take_leg(self):
+        self.end_current_dialog()
         self.has_leg = True
-        self.valid_keys.pop("take leg")
+        del self.valid_keys["take leg"]
 
     def end_go_ship(self):
+        self.end_current_dialog()
         self.is_at_ship = True
-        self.valid_keys.pop("go to ship")
-        self.valid_keys.pop("go to spaceship")
-        self.valid_keys.pop("go to ufo")
+        del self.valid_keys["go to ship"]
+        del self.valid_keys["go to spaceship"]
+        del self.valid_keys["go to ufo"]
 
