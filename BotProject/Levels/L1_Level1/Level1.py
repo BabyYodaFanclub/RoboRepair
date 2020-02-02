@@ -9,27 +9,31 @@ from DialogActions import ImmediateNextAction, SendPictureAction
 class Level1(AbstractLevel):
 
     def __init__(self):
-        self.has_entered_serial = False
         self.camera_is_on = False
-        self.brightness = 2400
-        self.focus = False
-        self.distortion_x = 1
-        self.distortion_y = 1
-        self.coordinate_system = False
 
         self.set_message_sequence('00_start', self.end_dialog_1)
 
         self.valid_keys = {
-            "how can I help": lambda: self.set_message_sequence("help"),
-            "what is your model?": lambda: self.set_message_sequence("model"),
-            "which model are you?": lambda: self.set_message_sequence("model"),
-            "what is your model": lambda: self.set_message_sequence("model"),
-            "which model are you": lambda: self.set_message_sequence("model"),
-            "show me what you see": lambda: self.set_message_sequence("visuals"),
-            "what do you see?": lambda: self.set_message_sequence("visuals"),
-            "what do you see": lambda: self.set_message_sequence("visuals"),
-            "hokus pokus camerus restartikus": lambda : self.set_message_sequence("camrestart")
+            "how can i help": lambda *x: self.set_message_sequence("help"),
+            "what is your model?": lambda *x: self.set_message_sequence("model"),
+            "which model are you?": lambda *x: self.set_message_sequence("model"),
+            "what is your model": lambda *x: self.set_message_sequence("model"),
+            "which model are you": lambda *x: self.set_message_sequence("model"),
+            "show me what you see": self.send_visuals,
+            "what do you see?": self.send_visuals,
+            "what do you see": self.send_visuals,
+            "hokus pokus camerus restartikus": lambda *x: self.set_message_sequence("camrestart", self.end_camera_restart_dialog())
         }
+
+    def send_visuals(self, bot: BotBase, global_state: State):
+        if not self.camera_is_on:
+            ImmediateNextAction("I can see this:", 0, []).send(bot, global_state, lambda *x:
+            SendPictureAction('', 0, [self.current_dir() + "/01black.png"]).send(bot, global_state, lambda *x: None)
+                                                               )
+        else:
+            ImmediateNextAction("I can see this:", 0, []).send(bot, global_state, lambda *x:
+            SendPictureAction('', 0, [self.current_dir() + "everything good.png"]).send(bot, global_state, lambda *x: None)
+                                                               )
 
     def get_file(self):
         return __file__
@@ -42,20 +46,19 @@ class Level1(AbstractLevel):
         message = message.lower()
         for key, val in self.valid_keys.items():
             if message in key:
-                val()
-        return self
+                val(bot, global_state)
+        ImmediateNextAction("", 0, []).send_error(bot, global_state, lambda *x: None)
 
 
     def end(self, global_state: State) -> 'LevelBase':
         pass
 
-    def send_visuals(self):
-        if not self.camera_is_on:
-            SendPictureAction
-
     def check_for_win(self) -> bool:
-        return self.has_entered_serial and self.brightness == 100 and self.focus \
-            and self.distortion_x == 0 and self.distortion_y == 0
+        return self.camera_is_on
 
     def end_dialog_1(self):
+        self.message_sequence = None
+
+    def end_camera_restart_dialog(self):
+        self.camera_is_on = True
         self.message_sequence = None
