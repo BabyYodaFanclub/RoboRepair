@@ -19,7 +19,7 @@ class Level1(LevelBase):
     def accept_voice_message(self, bot: BotBase, chat_id: str, voice_message, global_state: State) -> 'LevelBase':
         pass
 
-    def check_for_win(self):
+    def check_for_win(self) -> bool:
         return self.has_entered_serial and self.brightness == 100 and self.focus \
             and self.distortion_x == 0 and self.distortion_y == 0
 
