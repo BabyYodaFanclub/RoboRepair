@@ -11,6 +11,7 @@ from BotBase import BotBase
 from DummyLevel import DummyLevel
 from LevelBase import LevelBase
 from Levels.L0_Setup.SetupLevel import SetupLevel
+from Levels.L1_Level1.Level1 import Level1
 from State import State
 
 
@@ -63,7 +64,7 @@ class BotRepair(BotBase):
 
     @staticmethod
     def __create_new_chat_session():
-        return {'initialized': True, 'state': State(), 'current_level': SetupLevel()}
+        return {'initialized': True, 'state': State(), 'current_level': Level1()}
 
     def __start_callback(self, update: Update, context: CallbackContext):
         self.__ensure_session(context)
