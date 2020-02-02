@@ -49,9 +49,6 @@ class AbstractLevel(LevelBase, metaclass=ABCMeta):
         else:
             self.message_sequence.resume(bot, global_state, chat_type, message)
 
-        print('test')
-        print(self.is_level_finished)
-
         return self.end(global_state) if self.is_level_finished else self
 
     @abstractmethod
