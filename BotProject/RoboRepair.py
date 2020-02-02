@@ -88,6 +88,7 @@ class BotRepair(BotBase):
                                                context.chat_data['state'])
 
         if next_level == level:
+            context.chat_data['current_level'] = next_level
             return
 
         context.chat_data['current_level'] = next_level.accept_text_message(self,
@@ -112,6 +113,7 @@ class BotRepair(BotBase):
                                                 context.chat_data['state'])
 
         if next_level == level:
+            context.chat_data['current_level'] = next_level
             return
 
         context.chat_data['current_level'] = next_level.accept_voice_message(self,

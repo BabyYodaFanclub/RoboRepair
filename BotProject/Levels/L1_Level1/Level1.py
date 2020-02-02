@@ -17,7 +17,7 @@ class Level1(AbstractLevel):
         self.distortion_y = 1
         self.coordinate_system = False
 
-        self.message_sequence = MessageSequence(self.current_dir(), "00_start", lambda x: self.end_dialog_1())
+        self.set_message_sequence('00_start', self.end_dialog_1)
 
         self.valid_keys = {
             "how can I help": lambda: self.set_message_sequence("help"),
@@ -31,15 +31,12 @@ class Level1(AbstractLevel):
             "hokus pokus camerus restartikus": lambda : self.set_message_sequence("camrestart")
         }
 
-    def set_message_sequence(self, name: str):
-        self.message_sequence = MessageSequence(self.current_dir(), "help", self.end_message_sequence)
-
     def get_file(self):
         return __file__
 
     def level_resume(self, bot: BotBase, global_state: State, chat_type: ChatType, message) -> 'LevelBase':
         if chat_type is ChatType.VOICE:
-            ImmediateNextAction("", 0, []).send_error(bot, global_state, lambda: None)
+            ImmediateNextAction("", 0, []).send_error(bot, global_state, lambda *x: None)
             return
 
         message = message.lower()

@@ -3,6 +3,7 @@ import os
 
 from BotBase import BotBase
 from LevelBase import LevelBase
+from MessageSequence import MessageSequence
 from Speech import Speech
 from State import State
 
@@ -51,7 +52,7 @@ class AbstractLevel(LevelBase, metaclass=ABCMeta):
         return self.end(global_state) if self.is_level_finished else self
 
     @abstractmethod
-    def level_resume(self, bot: BotBase, global_state: State, chat_type: ChatType, message) -> 'LevelBase':
+    def level_resume(self, bot: BotBase, global_state: State, chat_type: ChatType, message):
         pass
 
     @abstractmethod
@@ -67,3 +68,14 @@ class AbstractLevel(LevelBase, metaclass=ABCMeta):
 
     def end_message_sequence(self):
         self.message_sequence = None
+
+    def set_message_sequence(self, name: str, end_callback: callable = None):
+        if end_callback is None:
+            end_callback = self.end_message_sequence
+
+        self.message_sequence = MessageSequence(self.current_dir(), name, end_callback)
+
+    def start_message_sequence(self, bot: BotBase, global_state: State):
+        self.message_sequence.start(bot, global_state)
+
+
