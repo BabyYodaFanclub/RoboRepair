@@ -1,5 +1,5 @@
 ![](logo.png)
----VON _W M R_, VON _W M R_, SIND DIE BESTEN RO BO TER---
+---_W M R_, _W M R_, BAUT DIE BESTEN RO BO TER---
 ~Company Slogan, est. 2847
 #We Manufacture Robots - Manual
 
