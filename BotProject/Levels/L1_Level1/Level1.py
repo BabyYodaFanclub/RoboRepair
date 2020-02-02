@@ -3,13 +3,14 @@ from BotBase import BotBase
 from ChatType import ChatType
 from MessageSequence import MessageSequence
 from State import State
-from DialogActions import ImmediateNextAction
+from DialogActions import ImmediateNextAction, SendPictureAction
 
 
 class Level1(AbstractLevel):
 
     def __init__(self):
         self.has_entered_serial = False
+        self.camera_is_on = False
         self.brightness = 2400
         self.focus = False
         self.distortion_x = 1
@@ -51,7 +52,9 @@ class Level1(AbstractLevel):
     def end(self, global_state: State) -> 'LevelBase':
         pass
 
-
+    def send_visuals(self):
+        if not self.camera_is_on:
+            SendPictureAction
 
     def check_for_win(self) -> bool:
         return self.has_entered_serial and self.brightness == 100 and self.focus \
