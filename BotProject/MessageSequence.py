@@ -37,7 +37,7 @@ class MessageSequence:
 
     def current_dialog(self):
         if self.dialog_position >= len(self.actions) or self.dialog_position < 0:
-            return EndLevelAction
+            return EndLevelAction()
 
         return self.actions[self.dialog_position - 1]
 
@@ -54,19 +54,16 @@ class MessageSequence:
     def resume(self, bot: BotBase, global_state: State, chat_type: ChatType, message):
         current = self.current_dialog()
 
-        print(current)
-
         if isinstance(current, EndLevelAction):
             self.end()
             return
-
-        print('test')
 
         current.do(bot, global_state, message, chat_type,
                    lambda pos: self.walk_dialog(bot, global_state, pos))
 
     def end(self):
-        self.end_callback()
+        callback = self.end_callback
+        callback()
 
     def walk_dialog(self, bot: BotBase, global_state: State, dialog_position: int):
         self.dialog_position = dialog_position

@@ -47,7 +47,7 @@ class DialogActionFactory:
             params[0] = self.path + params[0]
             return SendPictureAction(text, self.index, params)
         if _type == 'e':
-            return EndLevelAction(text, self.index, params)
+            return EndLevelAction()
 
 
 class DialogAction(metaclass=ABCMeta):
@@ -82,7 +82,9 @@ class DialogAction(metaclass=ABCMeta):
 
 
 class EndLevelAction(DialogAction):
-    pass
+
+    def __init__(self):
+        return
 
 
 class DialogInputAction(DialogAction, metaclass=ABCMeta):
@@ -114,8 +116,6 @@ class DialogWaitForTypeAction(DialogInputAction, metaclass=ABCMeta):
         for param in self.params:
             if param.lower().strip() in text:
                 correct = correct + 1
-
-        print(self.params)
 
         if correct >= 1 or len(self.params) == 0:
             callback(self.next_index())
