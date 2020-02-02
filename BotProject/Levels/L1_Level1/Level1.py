@@ -15,12 +15,9 @@ class Level1(AbstractLevel):
 
         self.valid_keys = {
             "how can i help": lambda b, s: self.run_message_sequence(b, s, "help"),
-            "what is your model?": lambda b, s: self.run_message_sequence(b, s, "model"),
-            "which model are you?": lambda b, s: self.run_message_sequence(b, s, "model"),
             "what is your model": lambda b, s: self.run_message_sequence(b, s, "model"),
             "which model are you": lambda b, s: self.run_message_sequence(b, s, "model"),
             "show me what you see": self.send_visuals,
-            "what do you see?": self.send_visuals,
             "what do you see": self.send_visuals,
             "hokus pokus camerus restartikus": lambda b, s: self.run_message_sequence(b, s, "camrestart", self.end_camera_restart_dialog)
         }
