@@ -2,7 +2,7 @@
 from abc import ABCMeta, abstractmethod
 from datetime import timedelta
 from enum import Enum, unique
-from random import random
+from random import randint
 import io
 
 from telegram import ChatAction
@@ -24,8 +24,8 @@ class DialogMode(Enum):
 
 class DialogActionFactory:
 
-    yes = ['yes'] # current_dialog = io.open('./Levels/YES.dialog', mode="r", encoding="UTF-8").readlines()
-    no = ['no'] # current_dialog = io.open('./Levels/NO.dialog', mode="r", encoding="UTF-8").readlines()
+    yes = list(map(lambda c: c.strip().lower(), io.open('./Levels/YES.dialog', mode="r", encoding="UTF-8").readlines()))
+    no = list(map(lambda c: c.strip().lower(), io.open('./Levels/NO.dialog', mode="r", encoding="UTF-8").readlines()))
 
     def __init__(self, path):
         self.path = path + '/'
@@ -77,22 +77,22 @@ class DialogAction(metaclass=ABCMeta):
         bot.send_chat_action(global_state.chat_id, ChatAction.TYPING)
         bot.schedule_message(global_state.chat_id,
                              DialogAction.get_unknown_command_text() if text == '' else text,
-                             1, lambda: callback(self.index + 1))
+                             1, lambda *x: callback(self.index + 1))
 
     @staticmethod
     def static_send_error(bot: BotBase, global_state: State, text: str = ''):
         bot.send_chat_action(global_state.chat_id, ChatAction.TYPING)
         bot.schedule_message(global_state.chat_id,
                              DialogAction.get_unknown_command_text() if text == '' else text,
-                             1, lambda: None)
+                             1, lambda *x: None)
 
-    __unknown_commands = current_dialog = io.open('./Levels/UNKNOWNCOMMAND.dialog',
-                                                  mode="r",
-                                                  encoding="UTF-8").readlines()
+    __unknown_commands = list(map(lambda c: c.strip(), io.open('./Levels/UNKNOWNCOMMAND.dialog',
+                                                               mode="r",
+                                                               encoding="UTF-8").readlines()))
 
     @staticmethod
     def get_unknown_command_text():
-        return random.choice(DialogAction.__unknown_commands)
+        return DialogAction.__unknown_commands[randint(0, len(DialogAction.__unknown_commands) -1)]
 
 
 class EndLevelAction(DialogAction):
@@ -122,7 +122,7 @@ class DialogWaitForTypeAction(DialogInputAction, metaclass=ABCMeta):
 
     def receive(self, bot: BotBase, global_state: State, text: str, chat_type: ChatType, callback):
         if chat_type is not self.type():
-            self.send_error(bot, global_state, chat_type, callback, self.text)
+            self.send_error(bot, global_state, lambda *x: callback(self.index), self.text)
             return
 
         correct = 0
@@ -135,7 +135,7 @@ class DialogWaitForTypeAction(DialogInputAction, metaclass=ABCMeta):
             callback(self.next_index())
             return
 
-        self.send_error(bot, global_state, lambda: callback(self.index - 1), self.text)
+        self.send_error(bot, global_state, lambda *x: callback(self.index), self.text)
 
 
 ##################################
@@ -170,24 +170,24 @@ class ImmediateNextAction(DialogOutputAction):
         for key, value in global_state.values.items():
             _text = _text.replace('$' + key, value)
 
-        if "$" in _text:
-            raise Exception('Found $ in ' + t)
+        # if "$" in _text:
+        #     raise Exception('Found $ in ' + t)
 
         return _text
 
     @staticmethod
     def static_send(bot: BotBase, global_state: State, text: str, callback: callable,
-                    mode: DialogMode = DialogMode.REGULAR, delay: timedelta = 1):
+                    mode: DialogMode = DialogMode.REGULAR, delay: int = 1):
 
         chat_id = global_state.chat_id
         _text = ImmediateNextAction.get_text(text.strip(), global_state)
 
         if mode == DialogMode.REGULAR:
             bot.send_chat_action(chat_id, ChatAction.TYPING)
-            bot.schedule_message(chat_id, _text, delay, lambda: callback())
+            bot.schedule_message(chat_id, _text, delay, lambda *x: callback())
 
         elif mode == DialogMode.DELAYED:
-            bot.delayed_type_message(chat_id, _text, lambda: callback())
+            bot.delayed_type_message(chat_id, _text, lambda *x: callback())
 
         elif mode == DialogMode.ITERATIVE:
             bot.send_iteratively_edited_message(chat_id, _text.split())
@@ -238,7 +238,7 @@ class ChoiceAction(DialogInputAction):
 
     def receive(self, bot: BotBase, global_state: State, text: str, chat_type: ChatType, callback):
         if chat_type is ChatType.VOICE:
-            self.send_error(bot, global_state, chat_type, callback, self.text)
+            self.send_error(bot, global_state, lambda *x: callback(self.index - 1), self.text)
             return
 
         try:
@@ -272,7 +272,7 @@ class SaveVarAction(DialogInputAction):
 
     def receive(self, bot: BotBase, global_state: State, text: str, chat_type: ChatType, callback):
         if chat_type is ChatType.VOICE:
-            self.send_error(bot, global_state, chat_type, callback, self.text)
+            self.send_error(bot, global_state, lambda *x: callback(self.index - 1), self.text)
             return
 
         global_state.values[self.params[0]] = text
