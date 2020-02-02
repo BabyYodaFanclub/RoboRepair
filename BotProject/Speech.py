@@ -62,7 +62,7 @@ class Speech:
         if not self.have_speech_to_text_contingent():
             raise ContingentReachedError('speechToText limit reached')
 
-        self.stt_counter.append(current_sec_time)
+        self.stt_counter.append(current_sec_time())
 
         r = sr.Recognizer()
 
@@ -87,7 +87,7 @@ class Speech:
         if not self.have_text_to_speech_contingent():
             raise ContingentReachedError('textToSpeech limit reached')
 
-        self.tts_counter.append(current_sec_time)
+        self.tts_counter.append(current_sec_time())
         text_message = text_message[:TTS_text_len]
 
         tts = gTTS(text_message)

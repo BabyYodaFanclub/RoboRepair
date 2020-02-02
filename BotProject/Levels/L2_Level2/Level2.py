@@ -65,4 +65,5 @@ class Level2(AbstractLevel):
         del self.valid_keys["go to ship"]
         del self.valid_keys["go to spaceship"]
         del self.valid_keys["go to ufo"]
+        self.set_level_completed()
 
