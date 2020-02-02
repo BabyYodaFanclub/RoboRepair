@@ -1,5 +1,6 @@
 
 from abc import ABCMeta, abstractmethod
+from datetime import timedelta
 from enum import Enum, unique
 
 from telegram import ChatAction
@@ -76,6 +77,14 @@ class DialogAction(metaclass=ABCMeta):
                              1, lambda: callback(self.index + 1))
 
     @staticmethod
+    def static_send_error(bot: BotBase, global_state: State, text: str = ''):
+        bot.send_chat_action(global_state.chat_id, ChatAction.TYPING)
+        bot.schedule_message(global_state.chat_id,
+                             DialogAction.get_unknown_command_text() if text == '' else text,
+                             1, lambda: None)
+
+
+    @staticmethod
     def get_unknown_command_text():
         # @todo read UNKNOWNCOMMMADN.dialog
         return 'Unknown Command'
@@ -130,11 +139,6 @@ class DialogWaitForTypeAction(DialogInputAction, metaclass=ABCMeta):
 
 
 class ImmediateNextAction(DialogOutputAction):
-    bot: None
-    mode: DialogMode.UNDEFINED
-    text: ''
-    index: 0
-    params: {}
 
     def __init__(self, text: str, index: int, params):
 
@@ -143,59 +147,65 @@ class ImmediateNextAction(DialogOutputAction):
         else:
             self.mode = DialogMode.REGULAR
 
-        self.params = {}
-
         if len(params) > 1:
-            self.params['delay'] = params[1]
+            self.delay = int(params[1])
         else:
-            self.params['delay'] = 1
+            self.delay = 1
 
         self.text = text
         self.index = index
 
     def send(self, bot: BotBase, global_state: State, callback):
-        chat_id = global_state.chat_id
+        self.static_send(bot, global_state, self.text, lambda *x: callback(self.next_index()),
+                         self.mode, self.delay)
 
-        if self.mode == DialogMode.REGULAR:
-            bot.send_chat_action(chat_id, ChatAction.TYPING)
-            bot.schedule_message(chat_id, self.get_text(global_state), 1, lambda: callback(self.next_index()))
-
-        elif self.mode == DialogMode.DELAYED:
-            tmp = self.get_text(global_state)
-            bot.delayed_type_message(chat_id, tmp, lambda: callback(self.next_index()))
-
-        elif self.mode == DialogMode.ITERATIVE:
-            bot.send_iteratively_edited_message(chat_id, self.get_text(global_state).split())
-            callback(self.next_index())
-
-        elif self.mode == DialogMode.VOICE:
-            speech = Speech()
-            bot.send_chat_action(chat_id, ChatAction.RECORD_AUDIO)
-            audio_message = speech.text_to_speech(self.get_text(global_state))
-            bot.send_voice_message(chat_id, audio_message)
-            callback(self.next_index())
-
-    def get_text(self, global_state: State):
-        _text = self.text
-
+    @staticmethod
+    def get_text(_text: str, global_state: State):
+        t = _text
         for key, value in global_state.values.items():
             _text = _text.replace('$' + key, value)
 
         if "$" in _text:
-            raise Exception('Found $ in ' + self.text)
+            raise Exception('Found $ in ' + t)
 
         return _text
+
+    @staticmethod
+    def static_send(bot: BotBase, global_state: State, text: str, callback: callable,
+                    mode: DialogMode = DialogMode.REGULAR, delay: timedelta = 1):
+
+        chat_id = global_state.chat_id
+        _text = ImmediateNextAction.get_text(text.strip(), global_state)
+
+        if mode == DialogMode.REGULAR:
+            bot.send_chat_action(chat_id, ChatAction.TYPING)
+            bot.schedule_message(chat_id, _text, delay, lambda: callback())
+
+        elif mode == DialogMode.DELAYED:
+            bot.delayed_type_message(chat_id, _text, lambda: callback())
+
+        elif mode == DialogMode.ITERATIVE:
+            bot.send_iteratively_edited_message(chat_id, _text.split())
+            callback()
+
+        elif mode == DialogMode.VOICE:
+            speech = Speech()
+            bot.send_chat_action(chat_id, ChatAction.RECORD_AUDIO)
+            audio_message = speech.text_to_speech(_text)
+            bot.send_voice_message(chat_id, audio_message)
+            callback()
 
 
 class SendPictureAction(DialogOutputAction):
 
     def send(self, bot: BotBase, global_state: State, callback):
-        image_path = self.params[0]
+        self.static_send(bot, global_state, self.params[0], lambda *x: callback(self.next_index()))
 
+    @staticmethod
+    def static_send(bot: BotBase, global_state: State, image_path: str, callback: callable):
         bot.send_chat_action(global_state.chat_id, ChatAction.UPLOAD_PHOTO)
         bot.send_image(global_state.chat_id, open(image_path, 'rb'))
-
-        callback(self.next_index())
+        callback()
 
 
 ##################################

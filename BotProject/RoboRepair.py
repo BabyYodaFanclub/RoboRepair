@@ -64,7 +64,7 @@ class BotRepair(BotBase):
 
     @staticmethod
     def __create_new_chat_session():
-        return {'initialized': True, 'state': State(), 'current_level': Level1()}
+        return {'initialized': True, 'state': State(), 'current_level': SetupLevel()}
 
     def __start_callback(self, update: Update, context: CallbackContext):
         self.__ensure_session(context)
@@ -181,7 +181,7 @@ class BotRepair(BotBase):
                                                    time_per_char)
 
     def __delayed_type_message_part(self, message: Message, text: str, current_char: int, time_per_char: timedelta,
-                                    callback):
+                                    callback: callable):
         while text[0:current_char].strip() == message.text:
             current_char += 1
         partial_text = text[0:current_char]
