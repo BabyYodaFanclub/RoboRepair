@@ -19,10 +19,15 @@ class Level1(AbstractLevel):
         self.message_sequence = MessageSequence(self.current_dir(), "00_start", lambda x: self.end_dialog_1())
 
         self.valid_keys = {
-            "How can I help": lambda: self.set_message_sequence("help"),
-            "What is your model?": lambda: self.set_message_sequence("model"),
-            "Which model are you?": lambda: self.set_message_sequence("model")
-
+            "how can I help": lambda: self.set_message_sequence("help"),
+            "what is your model?": lambda: self.set_message_sequence("model"),
+            "which model are you?": lambda: self.set_message_sequence("model"),
+            "what is your model": lambda: self.set_message_sequence("model"),
+            "which model are you": lambda: self.set_message_sequence("model"),
+            "show me what you see": lambda: self.set_message_sequence("visuals"),
+            "what do you see?": lambda: self.set_message_sequence("visuals"),
+            "what do you see": lambda: self.set_message_sequence("visuals"),
+            "hokus pokus camerus restartikus": lambda : self.set_message_sequence("camrestart")
         }
 
     def set_message_sequence(self, name: str):
@@ -36,6 +41,7 @@ class Level1(AbstractLevel):
             ImmediateNextAction("", 0, []).send_error(bot, global_state, lambda: None)
             return
 
+        message = message.lower()
         for key, val in self.valid_keys.items():
             if message in key:
                 val()
