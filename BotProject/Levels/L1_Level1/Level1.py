@@ -1,6 +1,7 @@
 from AbstractLevel import AbstractLevel
 from BotBase import BotBase
 from ChatType import ChatType
+from Levels.L2_Level2.Level2 import Level2
 from MessageSequence import MessageSequence
 from State import State
 from DialogActions import ImmediateNextAction, SendPictureAction
@@ -58,7 +59,7 @@ class Level1(AbstractLevel):
 
 
     def end(self, global_state: State) -> 'LevelBase':
-        pass
+        return Level2()
 
     def check_for_win(self) -> bool:
         return self.camera_is_on
@@ -69,3 +70,4 @@ class Level1(AbstractLevel):
     def end_camera_restart_dialog(self):
         self.camera_is_on = True
         self.message_sequence = None
+        self.set_level_completed()
