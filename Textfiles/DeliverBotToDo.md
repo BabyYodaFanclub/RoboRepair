@@ -35,10 +35,15 @@
 - [ ] ? Neue Aktion: `Load Dialog`
   - `[dialog=dialog_name]`: Springt in einen Dialog, und "merkt" sich die Rücksprung-addresse (index+1)
   
+### Robot
+- [ ] Robot-Struktur
+  - Robots/robot_name/robot
+  - Robots/robot_name/images/image_name.png -> l2_blowtorching_leg.png
+
 ### Level
 - [ ] Level-Struktur anpassen
-  - Levels/level_name/.level -> keywords: {(active, variants, function), ...}
-  - Levels/level_name/.message
+  - Levels/level_name/level -> keywords: {(active, variants, function), ...}
+  - Levels/level_name/level.message
   - Levels/level_name/images/image_name.png
   - Levels/level_name/dialog/dialog_name.message
   
