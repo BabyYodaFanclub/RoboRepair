@@ -5,7 +5,7 @@
   - Dict mit username/chat_id -> (current_level, global_state)
   - save everytime user go to next level / every n minutes (if changes)
 - [ ] Achivements
-  - Sammeln von Tieren
+  - Sammeln von Tieren (Stickerpack)
   - Mindestens n Robotern helfen  
 - [ ] Möglichst viel (vielleicht alle) Logik aus den Level.py dateien in die .dialog Dateien umbauen
   - bzw in eine .level Datei
@@ -67,8 +67,7 @@
   + nice/ cool - ja, nicht wahr?
   + was? - wiederholt letzten Satz -- den letzten satz kann man doch lesen?
   + schick ein Update - schickt letztes Bild
-  + Hilfe - gibt Hinweise  
-#### wishful thinking
+  + Hilfe - gibt Hinweise
 
 
 ## Writing
