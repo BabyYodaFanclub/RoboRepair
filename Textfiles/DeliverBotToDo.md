@@ -1,19 +1,28 @@
 # DeliverBot Feedback
 
 ## General
-- [ ] Tipps nach n Falscheingaben
-- [ ] Generelle Antworten (unabhängig vom Level)
 - [ ] Speichern von States
   - Dict mit username/chat_id -> (current_level, global_state)
   - save everytime user go to next level / every n minutes (if changes)
+  
+  
+## Input  
+- [ ] Tipps nach n Falscheingaben
+- [ ] Generelle Antworten (unabhängig vom Level)
+  - vielleicht als ordner mit generellen Fragen / Antworten (.dialog-files) 
+  - Send a update / Send a image
+  - Wie gehts
+- [ ] Regex für Antworten
+  - z.B.: für 'take leg', 'take your leg' -> 'take[\w\s]*leg'
+- [ ] Hilfestellungen für Antworten (help)
+  - z.B.: beim image sensor -> 'es ist viel zu hell'
 
-## Input
 #### needs to be done
 + zu viel Raten  mit Phrasen, mehr Variety erlauben
 + sollte auch auf random Eingaben reagieren können
   + Wie gehts? - **in der Story:** gerade etwas ängstlich, nicht so gut; **nach der Story:** sehr gut, ich hab Spaß, es macht Spaß die Galaxie zu erkunden
   + nice/ cool - ja, nicht wahr?
-  + was? - wiederholt letzten Satz
+  + was? - wiederholt letzten Satz -- den letzten satz kann man doch lesen?
   + schick ein Update - schickt letztes Bild
   + Hilfe - gibt Hinweise  
 #### wishful thinking
