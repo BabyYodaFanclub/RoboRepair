@@ -9,6 +9,8 @@
   - Mindestens n Robotern helfen  
 - [ ] Möglichst viel (vielleicht alle) Logik aus den Level.py dateien in die .dialog Dateien umbauen
   - bzw in eine .level Datei
+- [ ] Alternatives Ende wenn man den Boring Flammenwerfer aufhebt (aber bitte trotzdem noch wholesome happy end)
+  - wenn er sich repariert hat wird er von nem Alien angegriffen aber kann sich verteidigen oder so
 
 ### Actions
 - [ ] Leerzeilen überspringen / Kommentar-zeilen mit `#`
