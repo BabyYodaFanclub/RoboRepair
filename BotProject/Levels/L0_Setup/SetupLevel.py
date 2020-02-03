@@ -25,6 +25,3 @@ class SetupLevel(AbstractLevel):
 
     def end(self, global_state: State) -> 'LevelBase':
         return Level1()
-
-    def check_for_win(self, global_state: State):
-        pass

@@ -8,12 +8,12 @@ from telegram.ext import MessageHandler
 from telegram.ext import Updater
 
 from BotBase import BotBase
-from DummyLevel import DummyLevel
 from LevelBase import LevelBase
+from State import State
 from Levels.L0_Setup.SetupLevel import SetupLevel
 from Levels.L1_Level1.Level1 import Level1
 from Levels.L2_Level2.Level2 import Level2
-from State import State
+from Levels.L3_End.Level3 import Level3
 
 
 class BotRepair(BotBase):
@@ -89,7 +89,7 @@ class BotRepair(BotBase):
                                                context.chat_data['state'])
 
         if next_level == level:
-            context.chat_data['current_level'] = next_level
+            # context.chat_data['current_level'] = next_level
             return
 
         context.chat_data['current_level'] = next_level.accept_text_message(self,
@@ -105,7 +105,6 @@ class BotRepair(BotBase):
 
         print(f'update: {update}')
         print(f'chat_data: {context.chat_data}')
-        print(f'user_data: {context.user_data}')
 
         level = context.chat_data['current_level']
         next_level = level.accept_voice_message(self,

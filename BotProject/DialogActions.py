@@ -183,7 +183,8 @@ class ImmediateNextAction(DialogOutputAction):
         _text = ImmediateNextAction.get_text(text.strip(), global_state)
 
         if mode == DialogMode.REGULAR:
-            bot.send_chat_action(chat_id, ChatAction.TYPING)
+            if delay < 10:
+                bot.send_chat_action(chat_id, ChatAction.TYPING)
             bot.schedule_message(chat_id, _text, delay, lambda *x: callback())
 
         elif mode == DialogMode.DELAYED:

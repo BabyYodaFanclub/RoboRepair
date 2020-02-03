@@ -2,10 +2,12 @@
 class State:
 
     def __init__(self) -> None:
-        self.name = ''
-        self.robot_name = ''
         self.values = {}
+        self.achievements = {
+            'rescued': 0
+        }
+        self.finished = []
 
-    user_name: str
-    robot_name: str
     values: dict
+    achievements: dict
+    finished: list
