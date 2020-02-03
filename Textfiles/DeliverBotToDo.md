@@ -97,3 +97,4 @@
   - [ ] Pro Roboter
   - [ ] General Troubleshooting
   - [ ] About us / Contact / Legal als 
+- [ ] Verschiedene Beschreibungen/Stats für die einzelnen Roboter
