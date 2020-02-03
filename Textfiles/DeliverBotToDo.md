@@ -7,23 +7,47 @@
 - [ ] Achivements
   - Sammeln von Tieren
   - Mindestens n Robotern helfen  
+- [ ] Möglichst viel (vielleicht alle) Logik aus den Level.py dateien in die .dialog Dateien umbauen
+  - bzw in eine .level Datei
 
 ### Actions
 - [ ] Leerzeilen überspringen / Kommentar-zeilen mit `#`
 - [ ] Rename Actions, Dokumentieren
 - [ ] Syntax überarbeiten, damit regex für Keywords verwendet werden können
 - [ ] `.location` Datei, pro Level (oder mit set location), um collectables und bestimmte fragen auf einen Ort festzusetzten
-- [ ] Neue Aktion: `Set var`
-  - `[Set=varname] value`
-- [ ] Neue Aktion: `Collect` (Nur für eine .location Datei)
-  - `[Collect=keyword] Text`
-- [ ] Neue Aktion: `Diverse`
-  - `[Diverse=n]` die nächsten wähle einen der nächsten `n` Einträge (nur `i`) und mache dann nach diesen weiter
-- [ ] Neue Aktion: `Select` mit `Options`
-  - `[Select=n] Question` sagt: die nächsten `n` einträge sind Options
-  - `[Option=linenumber,keyword,keyword]` sagt: wenn eins der Keywords getroffen wurde springe in Zeile
+- [ ] Neue Aktion: `send voice`
+  - `[send_voice=(file_name)] (Text)`: Entweder von einer Datei, oder mit TextToSpeech
+- [ ] Neue Aktion: `set var`
+  - `[set_var=varname] value`
+- [ ] Neue Aktion: `collect` (Nur für eine location/level.message Datei aber **nicht** für dialog.message)
+  - `[collect=keyword] Text`
+- [ ] Neue Aktion: `diverse`
+  - `[diverse=n]` die nächsten wähle einen der nächsten `n` Einträge (nur `i`) und mache dann nach diesen weiter
+- [ ] Neue Aktion: `select` mit `options`
+  - `[select=n] Question` sagt: die nächsten `n` einträge sind Options
+  - `[option=linenumber,keyword,keyword]` sagt: wenn eins der Keywords getroffen wurde springe in Zeile
 - [ ] Neue Aktion: `Jump`, kann `c` ersetzen (damit wüden dann auch alle antworten in variablen gespeichert)
-  - `[Jump=varname,linenumber,linenumber]`
+  - `[jump=var_name,linenumber_x,linenumber_y]`: if var_name: x else: y
+- [ ] Neue Aktion: `Change Location`
+  - `[location=location_name]`: Change the current location to location_name
+- [ ] ? Neue Aktion: `Load Dialog`
+  - `[dialog=dialog_name]`: Springt in einen Dialog, und "merkt" sich die Rücksprung-addresse (index+1)
+  
+### Level
+- [ ] Level-Struktur anpassen
+  - Levels/level_name/.level -> keywords: {(active, variants, function), ...}
+  - Levels/level_name/.message
+  - Levels/level_name/images/image_name.png
+  - Levels/level_name/dialog/dialog_name.message
+  
+### Locations
+- [ ] Definieren von locations (Ordner Locations/location_name/)
+- [ ] Definieren von location-file (Order Locations/location_name/location)
+- [ ] Definieren von einer location sensitiven .message Datei
+- [ ] ?Bilder in Locations/location_name/images/image_name.png
+- [ ] ?Audio? in Locations/location_name/audio/audio_name.[mp3/ogg]
+- [ ] .achivements (die hier gesammelt werden können) ?
+
   
 ## Input  
 - [ ] Regex für Antworten
