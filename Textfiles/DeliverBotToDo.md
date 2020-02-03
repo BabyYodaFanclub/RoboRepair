@@ -1,5 +1,12 @@
 # DeliverBot Feedback
 
+## General
+- [ ] Tipps nach n Falscheingaben
+- [ ] Generelle Antworten (unabhängig vom Level)
+- [ ] Speichern von States
+  - Dict mit username/chat_id -> (current_level, global_state)
+  - save everytime user go to next level / every n minutes (if changes)
+
 ## Input
 #### needs to be done
 + zu viel Raten  mit Phrasen, mehr Variety erlauben
