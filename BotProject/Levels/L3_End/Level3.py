@@ -52,7 +52,8 @@ class Level3(AbstractLevel):
         self.package_has_arrived = True
 
     def end(self, global_state: State) -> 'LevelBase':
-        global_state.achievements.rescued = global_state.achievements.rescued + 1
+        rescued = global_state.achievements['rescued'] if global_state.achievements['rescued'] else 0
+        global_state.achievements['rescued'] = rescued + 1
         global_state.finished.append(global_state.values)
         global_state.values = {}
         return 'SetupLevel'()

@@ -1,0 +1,182 @@
+html, body {
+    padding: 0;
+    margin: 0;
+    border: 0;
+
+    color: white;
+    background: #91b0f7;
+}
+
+html {
+  box-sizing: border-box;
+}
+*, ::before, ::after {
+  box-sizing: inherit;
+}
+/*
+    prim-color: #31317b;
+    sec-color: #91b0f7;
+    ter-color: #5664be;
+
+
+*/
+
+header {
+    width: 100%;
+}
+
+header .img {
+    display: flex;
+    flex-direction: column;
+    max-width: 50rem;
+    margin: 0 auto;
+    min-height: 22rem; 
+    height: 50vh;
+    text-align: center;
+
+    justify-content: center;
+    align-items: center;
+}
+
+header .img p {
+    width: 100%;
+    margin: 1rem;
+}
+
+header nav ul {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: row;
+    list-style: none;
+    width: 100%;
+    background: #5664be;
+    justify-content: center;
+}
+
+header nav ul li a {
+    text-decoration: none;
+
+    color: white;
+    background: #31317b;
+
+    display: block;
+
+    min-width: 10rem;
+    padding: 1rem;
+    padding-bottom: calc(1rem - 3px);
+    border-bottom: 3px solid #31317b;
+    margin: 0 .5rem;
+    text-align: center;
+}
+
+h1, h2, h3 {
+    width: 100%;
+    text-align: center;
+    text-transform: uppercase;
+}
+
+h1 {
+    margin: 0 0 2rem 0;
+    width: 100%;
+    color: #31317b;
+}
+
+h2 {
+    color: white;
+
+    padding: 1rem 0;
+    margin: 2rem 0;
+}
+
+h3 {
+    margin: 3rem 0 1rem;
+}
+
+p, dl {
+    padding: 2rem;
+    display: block;
+    background: #5664be;
+}
+
+section {
+    max-width: calc(50rem + 2rem);
+    margin: auto;
+    padding: 0 1rem;
+}
+
+ul.list, ul.model-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax( 15rem, 1fr) );
+    grid-gap: 1rem;
+
+    list-style: none;
+    max-width: 50rem;
+    margin: 0 auto;
+    padding: 0 0 3rem;
+}
+
+ul.list li {
+    display: block;
+}
+
+ul.model-list li a {
+    display: block;
+    color: white;
+    background: #31317b;
+
+    height: 4rem;
+    line-height: 4rem;
+    text-decoration: none;
+    text-align: center;
+}
+
+a.button {
+    display: inline-block;
+    color: white;
+    background: #31317b;
+    line-height: 1.5rem;
+    padding: .25rem 1.5rem;
+    text-decoration: none;
+    text-align: center;
+}
+
+table {
+    width: 100%;
+    background-color: #5664be;
+    border-collapse:collapse;
+}
+
+table tr td,
+table tr th {
+    text-align: left;
+    padding: .5rem;
+    width: 50%;
+}
+
+table tr td:first-of-type,
+table tr th:first-of-type {
+    text-align: right;
+}
+
+table thead {
+    background-color: #31317b;
+}
+
+table tr th {
+    text-transform: uppercase;
+}
+
+a {
+    transition: background .25s ease-in-out;
+}
+
+ul li a:hover,
+a.button:hover {
+    background: #5664be;
+}
+
+
+footer {
+    padding: 4rem 0;
+}
