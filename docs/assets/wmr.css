@@ -99,6 +99,10 @@ p, dl {
     background: #5664be;
 }
 
+dl {
+    background: #31317b;
+}
+
 section {
     max-width: calc(50rem + 2rem);
     margin: auto;
