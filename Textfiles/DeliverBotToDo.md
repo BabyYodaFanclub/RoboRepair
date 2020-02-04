@@ -109,7 +109,7 @@
 ## Website
 - [x] Domain / Github-page
   - erstmal als github-page
-- [ ] Styling (konsistent mit Logo + Spiel)
+- [x] Styling (konsistent mit Logo + Spiel)
 - [x] Homepage
 - [x] Verlinkung aus dem Menu zu den einzelnen Robotern und zu General Troubleshooting
 - [x] (Seperate Seiten)
