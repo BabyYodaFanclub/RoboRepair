@@ -15,7 +15,8 @@
 ### Actions
 - [ ] Leerzeilen überspringen / Kommentar-zeilen mit `#`
 - [ ] Rename Actions, Dokumentieren
-- [ ] Syntax überarbeiten, damit regex für Keywords verwendet werden können (vielleicht json)
+- [x] Syntax überarbeiten, damit regex für Keywords verwendet werden können (vielleicht json)
+  - Doku in /wiki/message-files
 - [ ] `.location` Datei, pro Level (oder mit set location), um collectables und bestimmte fragen auf einen Ort festzusetzten
 - [ ] Aktion Rename: `[i=v]` -> `send voice`
   - `[send_voice=(file_name)] (Text)`: Entweder von einer Datei, oder mit TextToSpeech
@@ -106,12 +107,13 @@
   - [ ] mit den Bildern könnte man ein Narrative bauen, was z.B. auch auf Instagram gepostet werden könnte (gleichzeitig auch ne Promotion für den Bot)
 
 ## Website
-- [ ] Domain / Github-page
+- [x] Domain / Github-page
+  - erstmal als github-page
 - [ ] Styling (konsistent mit Logo + Spiel)
-- [ ] Homepage
-- [ ] Verlinkung aus dem Menu zu den einzelnen Robotern und zu General Troubleshooting
-- [ ] (Seperate Seiten)
-  - [ ] Pro Roboter
-  - [ ] General Troubleshooting
+- [x] Homepage
+- [x] Verlinkung aus dem Menu zu den einzelnen Robotern und zu General Troubleshooting
+- [x] (Seperate Seiten)
+  - [x] Pro Roboter
+  - [x] General Troubleshooting
   - [ ] About us / Contact / Legal als 
 - [ ] Verschiedene Beschreibungen/Stats für die einzelnen Roboter
