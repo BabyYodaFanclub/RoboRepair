@@ -15,23 +15,33 @@
 ### Actions
 - [ ] Leerzeilen überspringen / Kommentar-zeilen mit `#`
 - [ ] Rename Actions, Dokumentieren
-- [ ] Syntax überarbeiten, damit regex für Keywords verwendet werden können
+- [ ] Syntax überarbeiten, damit regex für Keywords verwendet werden können (vielleicht json)
 - [ ] `.location` Datei, pro Level (oder mit set location), um collectables und bestimmte fragen auf einen Ort festzusetzten
-- [ ] Neue Aktion: `send voice`
+- [ ] Aktion Rename: `[i=v]` -> `send voice`
   - `[send_voice=(file_name)] (Text)`: Entweder von einer Datei, oder mit TextToSpeech
+- [ ] Aktion Rename: `[i]` -> `send text`
+  - `[send_text=mode,delay] Text`: mode: (regular,delayed,iterative), delay (only regular)
+- [ ] Aktion Rename: `[e]` -> `end`
+  - `[end=type]`: type: ([dialog], command, level)
 - [ ] Neue Aktion: `set var`
   - `[set_var=varname] value`
-- [ ] Neue Aktion: `collect` (Nur für eine location/level.message Datei aber **nicht** für dialog.message)
+- [ ] Neue Aktion: `Change Location`
+  - `[set_location=location_name]`: Change the current location to location_name
+- [ ] Neue Aktion: `collect` (Nur für eine location/level.[command/message] Datei aber **nicht** für dialog.message)
   - `[collect=keyword] Text`
 - [ ] Neue Aktion: `diverse`
   - `[diverse=n]` die nächsten wähle einen der nächsten `n` Einträge (nur `i`) und mache dann nach diesen weiter
 - [ ] Neue Aktion: `select` mit `options`
   - `[select=n] Question` sagt: die nächsten `n` einträge sind Options
-  - `[option=linenumber,keyword,keyword]` sagt: wenn eins der Keywords getroffen wurde springe in Zeile
+  - `[option=linenumber,'keyword','keyword']` sagt: wenn eins der Keywords getroffen wurde springe in Zeile
 - [ ] Neue Aktion: `Jump`, kann `c` ersetzen (damit wüden dann auch alle antworten in variablen gespeichert)
-  - `[jump=var_name,linenumber_x,linenumber_y]`: if var_name: x else: y
-- [ ] Neue Aktion: `Change Location`
-  - `[location=location_name]`: Change the current location to location_name
+  - `[jump=linenumber_x,linenumber_y,expr(,expr_n)*]`: `if expr (or expr_n)*: x else: y`
+  - erstmal mit expr: var_name
+  - mit mit expr: 'var_name == "bla" and var_name2 == True'
+- [ ] Neue Action: `Command`
+  - `[command='keyword']`: startet ein command verhält sich wie Dialog bis `end=command`.
+  - z.B. `[command='help']\n  [i] You can tell me were to go.\n[end=command]`
+  - oder. `[command='collect fluffball']\n  [collect='fluffball'] Oh he is so cute, I think I have to put him in my collection.\n[end=command]`
 - [ ] ? Neue Aktion: `Load Dialog`
   - `[dialog=dialog_name]`: Springt in einen Dialog, und "merkt" sich die Rücksprung-addresse (index+1)
   
@@ -42,15 +52,16 @@
 
 ### Level
 - [ ] Level-Struktur anpassen
-  - Levels/level_name/level -> keywords: {(active, variants, function), ...}
-  - Levels/level_name/level.message
+  - ?(Levels/level_name/level -> keywords: {(active, variants, function), ...})
+  - Levels/level_name/level.command
   - Levels/level_name/images/image_name.png
   - Levels/level_name/dialog/dialog_name.message
   
 ### Locations
 - [ ] Definieren von locations (Ordner Locations/location_name/)
 - [ ] Definieren von location-file (Order Locations/location_name/location)
-- [ ] Definieren von einer location sensitiven .message Datei
+- [ ] Definieren von einer location sensitiven .command Datei
+- [ ] Locations/location_name/dialog/dialog_name.message
 - [ ] ?Bilder in Locations/location_name/images/image_name.png
 - [ ] ?Audio? in Locations/location_name/audio/audio_name.[mp3/ogg]
 - [ ] .achivements (die hier gesammelt werden können) ?
